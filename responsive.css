@@ -322,3 +322,343 @@
         font-size: 0.72rem;
     }
 }
+
+/* ========================================
+   Mobile UI Polish v2
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Header compact */
+    .header {
+        height: 58px;
+        padding: 0 12px;
+    }
+
+    .header-left {
+        gap: 10px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .page-title {
+        min-width: 0;
+    }
+
+    .page-title h1 {
+        font-size: 1.05rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 42vw;
+    }
+
+    .main-content {
+        padding: 12px;
+    }
+
+    /* Cards tighter */
+    .summary-card {
+        padding: 14px;
+    }
+
+    .card-value {
+        font-size: 1.15rem;
+    }
+
+    .stat-card {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+
+    /* Tables: horizontal scroll with hint */
+    .table-responsive {
+        margin: 0 -4px;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        min-width: 560px;
+    }
+
+    .products-table {
+        min-width: 640px;
+    }
+
+    /* Action buttons touch-friendly */
+    .btn-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .action-btns {
+        gap: 4px;
+        flex-wrap: nowrap;
+    }
+
+    /* Modals full-ish on mobile */
+    .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .modal,
+    .modal-lg,
+    .modal-sm {
+        max-width: 100%;
+        width: 100%;
+        max-height: 92vh;
+        border-radius: 16px 16px 0 0;
+        margin: 0;
+    }
+
+    .modal-header {
+        padding: 14px 16px;
+        position: sticky;
+        top: 0;
+        background: var(--bg-card);
+        z-index: 2;
+    }
+
+    .modal-body {
+        padding: 16px;
+        max-height: calc(92vh - 130px);
+        overflow-y: auto;
+    }
+
+    .modal-footer {
+        padding: 12px 16px;
+        position: sticky;
+        bottom: 0;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-light);
+    }
+
+    .modal-footer .btn {
+        flex: 1;
+        min-height: 44px;
+    }
+
+    /* Forms */
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    .filter-select,
+    .search-box input {
+        min-height: 44px;
+        font-size: 16px; /* prevent iOS zoom */
+    }
+
+    .btn {
+        min-height: 44px;
+    }
+
+    .btn-sm {
+        min-height: 36px;
+    }
+
+    /* POS mobile */
+    .pos-layout {
+        gap: 12px;
+    }
+
+    .pos-products-panel {
+        min-height: 45vh;
+        max-height: 48vh;
+        border-radius: 12px;
+    }
+
+    .pos-cart-panel {
+        border-radius: 12px;
+        min-height: auto;
+    }
+
+    .pos-products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .pos-product-card {
+        padding: 8px 6px;
+    }
+
+    .pos-product-img {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+
+    .pos-product-name {
+        font-size: 0.75rem;
+    }
+
+    .pos-product-price {
+        font-size: 0.85rem;
+    }
+
+    .pos-cart-summary {
+        padding: 12px;
+    }
+
+    .btn-checkout {
+        min-height: 48px;
+        font-size: 1rem;
+        border-radius: 12px;
+    }
+
+    .payment-method-btns {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+
+    .pay-method {
+        justify-content: center;
+        padding: 10px 6px;
+        font-size: 0.72rem;
+    }
+
+    /* Sidebar mobile width */
+    .sidebar {
+        width: min(280px, 85vw);
+    }
+
+    .nav-item .nav-link {
+        padding: 13px 14px;
+        min-height: 46px;
+    }
+
+    /* Mini stats scroll row */
+    .mini-stats {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .mini-stat {
+        min-width: 120px;
+        flex-shrink: 0;
+    }
+
+    /* Settings stack */
+    .settings-layout {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    /* Purchase item rows */
+    .purchase-item-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .purchase-item-row .btn-remove-item {
+        width: 100%;
+        height: 40px;
+        border-radius: 8px;
+    }
+
+    /* Toast mobile */
+    .toast-container {
+        left: 12px;
+        right: 12px;
+        top: auto;
+        bottom: 16px;
+    }
+
+    .toast {
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* Categories */
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Hide secondary header controls on small phones handled below */
+}
+
+@media (max-width: 576px) {
+    .summary-cards {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .pos-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .header-search,
+    .header-date,
+    .lang-toggle {
+        display: none !important;
+    }
+
+    /* Show lang in a compact way if needed - already in settings */
+    .theme-toggle,
+    .notification-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .page-title h1 {
+        max-width: 50vw;
+    }
+
+    .dashboard-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .payment-method-btns {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Safe area for notched phones */
+@supports (padding: max(0px)) {
+    @media (max-width: 768px) {
+        .sidebar {
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+        .modal-footer {
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+        .pos-cart-summary {
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+    }
+}
+
+/* Touch: remove hover stickiness feel */
+@media (hover: none) {
+    .summary-card:hover,
+    .stat-card:hover,
+    .pos-product-card:hover,
+    .category-card:hover {
+        transform: none;
+    }
+
+    .pos-product-card:active {
+        transform: scale(0.97);
+        border-color: var(--primary);
+    }
+
+    .btn-primary:active {
+        opacity: 0.9;
+    }
+}

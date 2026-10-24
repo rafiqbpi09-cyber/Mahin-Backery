@@ -111,6 +111,7 @@ const Settings = {
 
         Storage.saveData(Storage.KEYS.SETTINGS, settings);
         this.updateSidebarLogo(settings);
+        if (window.applyBranding) applyBranding();
         showToast('Settings saved', 'success');
     },
 

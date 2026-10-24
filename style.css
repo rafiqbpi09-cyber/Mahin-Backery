@@ -2163,3 +2163,26 @@ input, select, textarea {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* polish-v2 */
+.notification-btn .badge:empty,
+.notification-btn .badge[data-count="0"] {
+    display: none;
+}
+.pos-cart-items::-webkit-scrollbar,
+.pos-products-grid::-webkit-scrollbar,
+.sidebar-nav::-webkit-scrollbar {
+    width: 5px;
+}
+.pos-cart-items::-webkit-scrollbar-thumb,
+.pos-products-grid::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+.btn:active {
+    transform: scale(0.98);
+}
+.summary-card .card-value {
+    word-break: break-all;
+}

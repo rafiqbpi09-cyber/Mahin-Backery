@@ -198,6 +198,22 @@ const translations = {
         selectReport: 'রিপোর্ট টাইপ ও তারিখ বেছে নিয়ে Generate চাপুন',
         payment: 'পেমেন্ট',
         save: 'সেভ',
+        addRawMaterial: 'কাঁচামাল যোগ',
+        noRawMaterials: 'এখনো কোনো কাঁচামাল নেই',
+        searchRaw: 'কাঁচামাল খুঁজুন...',
+        addProduction: 'নতুন প্রোডাকশন',
+        saveProduction: 'প্রোডাকশন সম্পন্ন',
+        noProduction: 'এখনো কোনো প্রোডাকশন নেই',
+        searchProduction: 'প্রোডাকশন খুঁজুন...',
+        totalProduction: 'এন্ট্রি',
+        todayProduction: 'আজকের পরিমাণ',
+        rawMaterialsUsed: 'ব্যবহৃত কাঁচামাল',
+        totalItems: 'মোট',
+        name: 'নাম',
+        qty: 'পরিমাণ',
+        paySupplier: 'পেমেন্ট করুন',
+        supplierLedger: 'সাপ্লায়ার লেজার',
+
 
 
 
@@ -401,6 +417,22 @@ const translations = {
         selectReport: 'Select report type and date range, then Generate',
         payment: 'Payment',
         save: 'Save',
+        addRawMaterial: 'Add Raw Material',
+        noRawMaterials: 'No raw materials yet',
+        searchRaw: 'Search raw materials...',
+        addProduction: 'New Production',
+        saveProduction: 'Complete Production',
+        noProduction: 'No production yet',
+        searchProduction: 'Search production...',
+        totalProduction: 'Entries',
+        todayProduction: 'Today Qty',
+        rawMaterialsUsed: 'Raw Materials Used',
+        totalItems: 'Total',
+        name: 'Name',
+        qty: 'Qty',
+        paySupplier: 'Pay Supplier',
+        supplierLedger: 'Supplier Ledger',
+
 
 
 

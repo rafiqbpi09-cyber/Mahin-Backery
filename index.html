@@ -812,19 +812,78 @@
             </section>
 
             <section class="page" id="page-production">
-                <div class="coming-soon">
-                    <i class="fas fa-industry"></i>
-                    <h2 data-i18n="productionComing">Production Module</h2>
-                    <p data-i18n="comingSoon">Coming in next step...</p>
+                <div class="page-toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="productionSearch" placeholder="Search production..." data-i18n-placeholder="searchProduction">
+                        </div>
+                        <input type="date" id="productionDateFrom" class="filter-select">
+                        <input type="date" id="productionDateTo" class="filter-select">
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" id="btnAddProduction">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="addProduction">New Production</span>
+                        </button>
+                    </div>
                 </div>
+                <div class="mini-stats">
+                    <div class="mini-stat"><span class="mini-stat-label" data-i18n="totalProduction">Entries</span><span class="mini-stat-value" id="prodStatCount">0</span></div>
+                    <div class="mini-stat"><span class="mini-stat-label" data-i18n="todayProduction">Today Qty</span><span class="mini-stat-value" id="prodStatToday">0</span></div>
+                </div>
+                <div class="card"><div class="card-body no-padding"><div class="table-responsive">
+                    <table class="data-table" id="productionTable">
+                        <thead><tr>
+                            <th>Ref</th><th data-i18n="productName">Product</th><th data-i18n="date">Date</th>
+                            <th data-i18n="qty">Qty Produced</th><th data-i18n="rawMaterials">Raw Materials</th>
+                            <th data-i18n="actions">Actions</th>
+                        </tr></thead>
+                        <tbody id="productionBody">
+                            <tr class="empty-row"><td colspan="6" class="empty-state"><i class="fas fa-industry"></i><p data-i18n="noProduction">No production yet</p></td></tr>
+                        </tbody>
+                    </table>
+                </div></div></div>
             </section>
 
             <section class="page" id="page-raw-materials">
-                <div class="coming-soon">
-                    <i class="fas fa-wheat-awn"></i>
-                    <h2 data-i18n="rawMaterialsComing">Raw Materials Module</h2>
-                    <p data-i18n="comingSoon">Coming in next step...</p>
+                <div class="page-toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="rawSearch" placeholder="Search raw materials..." data-i18n-placeholder="searchRaw">
+                        </div>
+                        <select id="rawStockFilter" class="filter-select">
+                            <option value="">All</option>
+                            <option value="low">Low Stock</option>
+                            <option value="out">Out of Stock</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" id="btnAddRaw">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="addRawMaterial">Add Raw Material</span>
+                        </button>
+                    </div>
                 </div>
+                <div class="mini-stats">
+                    <div class="mini-stat"><span class="mini-stat-label" data-i18n="totalItems">Total</span><span class="mini-stat-value" id="rawStatTotal">0</span></div>
+                    <div class="mini-stat warning"><span class="mini-stat-label" data-i18n="lowStockProducts">Low</span><span class="mini-stat-value" id="rawStatLow">0</span></div>
+                    <div class="mini-stat danger"><span class="mini-stat-label" data-i18n="outOfStock">Out</span><span class="mini-stat-value" id="rawStatOut">0</span></div>
+                </div>
+                <div class="card"><div class="card-body no-padding"><div class="table-responsive">
+                    <table class="data-table" id="rawMaterialsTable">
+                        <thead><tr>
+                            <th data-i18n="name">Name</th><th data-i18n="unit">Unit</th>
+                            <th data-i18n="stock">Stock</th><th data-i18n="minStock">Min</th>
+                            <th data-i18n="purchasePrice">Price</th><th data-i18n="supplier">Supplier</th>
+                            <th data-i18n="expiryDate">Expiry</th><th data-i18n="actions">Actions</th>
+                        </tr></thead>
+                        <tbody id="rawMaterialsBody">
+                            <tr class="empty-row"><td colspan="8" class="empty-state"><i class="fas fa-wheat-awn"></i><p data-i18n="noRawMaterials">No raw materials yet</p></td></tr>
+                        </tbody>
+                    </table>
+                </div></div></div>
             </section>
 
             <section class="page" id="page-stock">
@@ -966,6 +1025,7 @@
                             <option value="customer-due">Customer Due</option>
                             <option value="supplier-due">Supplier Due</option>
                             <option value="product-sales">Product Sales</option>
+                            <option value="production">Production Report</option>
                         </select>
                         <input type="date" id="reportDateFrom" class="filter-select">
                         <input type="date" id="reportDateTo" class="filter-select">
@@ -1618,6 +1678,160 @@
         </div>
     </div>
 
+
+    <!-- RAW MATERIAL MODAL -->
+    <div class="modal-overlay" id="rawModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="rawModalTitle" data-i18n="addRawMaterial">Add Raw Material</h2>
+                <button class="modal-close" data-close-modal="rawModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="rawForm" class="modal-body">
+                <input type="hidden" id="rawId">
+                <div class="form-group">
+                    <label data-i18n="name">Name <span class="required">*</span></label>
+                    <input type="text" id="rawName" required placeholder="e.g. Flour">
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label data-i18n="unit">Unit</label>
+                        <select id="rawUnit">
+                            <option value="kg">kg</option>
+                            <option value="g">g</option>
+                            <option value="ltr">ltr</option>
+                            <option value="ml">ml</option>
+                            <option value="pcs">pcs</option>
+                            <option value="pack">pack</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="currentStock">Current Stock</label>
+                        <input type="number" id="rawStock" min="0" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="minStock">Min Stock</label>
+                        <input type="number" id="rawMinStock" min="0" step="0.01" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="purchasePrice">Purchase Price</label>
+                        <input type="number" id="rawPrice" min="0" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="supplier">Supplier</label>
+                        <select id="rawSupplier"><option value="">—</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="expiryDate">Expiry Date</label>
+                        <input type="date" id="rawExpiry">
+                    </div>
+                </div>
+                <div class="form-error" id="rawFormError"></div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close-modal="rawModal" data-i18n="cancel">Cancel</button>
+                <button type="submit" form="rawForm" class="btn btn-primary" data-i18n="save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCTION MODAL -->
+    <div class="modal-overlay" id="productionModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h2 data-i18n="addProduction">New Production</h2>
+                <button class="modal-close" data-close-modal="productionModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="productionForm" class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label data-i18n="productName">Finished Product <span class="required">*</span></label>
+                        <select id="prodProduct" required><option value="">Select Product</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="qty">Quantity Produced <span class="required">*</span></label>
+                        <input type="number" id="prodQty" min="0.01" step="0.01" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="date">Production Date</label>
+                        <input type="date" id="prodDate">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="note">Note</label>
+                        <input type="text" id="prodNote">
+                    </div>
+                </div>
+                <div class="purchase-items-section">
+                    <div class="section-label">
+                        <span data-i18n="rawMaterialsUsed">Raw Materials Used</span>
+                        <button type="button" class="btn btn-sm btn-secondary" id="btnAddRawItem"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                    <div id="prodRawItemsList"></div>
+                </div>
+                <div class="form-error" id="productionFormError"></div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close-modal="productionModal" data-i18n="cancel">Cancel</button>
+                <button type="submit" form="productionForm" class="btn btn-primary" data-i18n="saveProduction">Complete Production</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========== SUPPLIER LEDGER MODAL ========== -->
+    <div class="modal-overlay" id="supplierLedgerModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h2 id="supplierLedgerTitle">Supplier Ledger</h2>
+                <button class="modal-close" data-close-modal="supplierLedgerModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="supplierLedgerContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close-modal="supplierLedgerModal" data-i18n="done">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SUPPLIER PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="supplierPaymentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 data-i18n="paySupplier">Pay Supplier</h2>
+                <button class="modal-close" data-close-modal="supplierPaymentModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="supplierPaymentForm" class="modal-body">
+                <input type="hidden" id="paySupplierId">
+                <p id="paySupplierInfo" style="margin-bottom:14px;color:var(--text-secondary)"></p>
+                <div class="form-group">
+                    <label data-i18n="dueAmount">Current Due</label>
+                    <input type="text" id="paySupplierCurrentDue" readonly>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="paidAmount">Pay Amount <span class="required">*</span></label>
+                    <input type="number" id="paySupplierAmount" min="0.01" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="paymentMethod">Payment Method</label>
+                    <select id="paySupplierMethod">
+                        <option value="Cash">Cash</option>
+                        <option value="bKash">bKash</option>
+                        <option value="Nagad">Nagad</option>
+                        <option value="Card">Card</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="note">Note</label>
+                    <input type="text" id="paySupplierNote" placeholder="Optional">
+                </div>
+                <div class="form-error" id="supplierPaymentError"></div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close-modal="supplierPaymentModal" data-i18n="cancel">Cancel</button>
+                <button type="submit" form="supplierPaymentForm" class="btn btn-primary" data-i18n="paySupplier">Pay</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="i18n.js"></script>
@@ -1632,6 +1846,8 @@
     <script src="expenses.js"></script>
     <script src="settings.js"></script>
     <script src="reports.js"></script>
+    <script src="raw-materials.js"></script>
+    <script src="production.js"></script>
     <script src="stock.js"></script>
     <script src="orders.js"></script>
     <script src="app.js"></script>

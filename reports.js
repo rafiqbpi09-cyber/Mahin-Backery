@@ -54,7 +54,8 @@ const Reports = {
             stock: 'Stock Report',
             'customer-due': 'Customer Due Report',
             'supplier-due': 'Supplier Due Report',
-            'product-sales': 'Product Sales Report'
+            'product-sales': 'Product Sales Report',
+            production: 'Production Report'
         };
         if (title) title.textContent = titles[type] || 'Report';
 
@@ -201,6 +202,23 @@ const Reports = {
             html += this.table(
                 ['Product', 'Qty Sold', 'Amount'],
                 rows.map(r => [r.name, r.qty, Storage.formatCurrency(r.amount)])
+            );
+        } else if (type === 'production') {
+            const list = Storage.getArray(Storage.KEYS.PRODUCTIONS).filter(p => this.inRange(p.date, from, to));
+            const totalQty = list.reduce((a, p) => a + (p.quantity || 0), 0);
+            html += this.summaryCards([
+                ['Entries', list.length],
+                ['Total Qty Produced', totalQty]
+            ]);
+            html += this.table(
+                ['Ref', 'Date', 'Product', 'Qty', 'Raw Materials'],
+                list.sort((a, b) => new Date(b.date) - new Date(a.date)).map(p => [
+                    p.refNo,
+                    this.fmtDate(p.date),
+                    p.productName || '—',
+                    p.quantity,
+                    (p.rawMaterials || []).map(r => r.name + ': ' + r.qty).join(', ') || '—'
+                ])
             );
         }
 

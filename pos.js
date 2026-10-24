@@ -415,6 +415,7 @@ const POS = {
         content.innerHTML = `
             <div class="invoice-paper" id="invoicePrintArea">
                 <div class="invoice-header">
+                    ${settings.logo ? `<img src="${settings.logo}" alt="Logo" style="max-height:60px;margin:0 auto 10px;display:block">` : ''}
                     <h1>${escapeHtml(settings.bakeryName || 'Bakery')}</h1>
                     <p>${escapeHtml(settings.address || '')}</p>
                     <p>${escapeHtml(settings.phone || '')}${settings.email ? ' | ' + escapeHtml(settings.email) : ''}</p>

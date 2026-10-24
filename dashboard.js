@@ -32,11 +32,19 @@ function updateDashboard() {
     const todayExpenseTotal = todayExpenseList.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
     document.getElementById('todayExpense').textContent = Storage.formatCurrency(todayExpenseTotal);
 
-    // Today's Profit (Sales - Purchase - Expense) - simplified for now
-    // Better: Sales profit (selling - purchase cost of sold items) - expenses
-    // For dashboard: Sales - Expense as rough profit, or Sales - COGS - Expense
-    const todayProfit = todaySalesTotal - todayExpenseTotal;
+    // Today's Profit = Sales - COGS - Expenses
+    let todayCOGS = 0;
+    todaySalesList.forEach(s => {
+        (s.items || []).forEach(item => {
+            todayCOGS += (Number(item.purchasePrice) || 0) * (Number(item.qty) || 0);
+        });
+    });
+    const todayProfit = todaySalesTotal - todayCOGS - todayExpenseTotal;
     document.getElementById('todayProfit').textContent = Storage.formatCurrency(todayProfit);
+    const profitEl = document.getElementById('todayProfit');
+    if (profitEl) {
+        profitEl.style.color = todayProfit >= 0 ? '' : 'var(--danger)';
+    }
 
     // Products
     document.getElementById('totalProducts').textContent = products.length;
@@ -79,6 +87,7 @@ function updateDashboard() {
 
     // Chart
     renderSalesChart(sales, 'week');
+    if (window.updateNotifications) updateNotifications();
 }
 
 /**

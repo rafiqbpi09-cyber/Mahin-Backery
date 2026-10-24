@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     Dashboard.update();
     Dashboard.setupChartFilters();
 
-    // Init Products & Categories modules
+    // Init modules
     if (window.Categories) Categories.init();
     if (window.Products) Products.init();
     if (window.POS) POS.init();
@@ -38,10 +38,53 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.Orders) Orders.init();
     if (window.Stock) Stock.init();
     if (window.Reports) Reports.init();
+    if (window.RawMaterials) RawMaterials.init();
+    if (window.Production) Production.init();
 
-    // Update date every minute
+    // Apply bakery name to sidebar + notifications
+    applyBranding();
+    updateNotifications();
+
+    // ESC closes topmost modal
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const open = document.querySelector('.modal-overlay.active');
+            if (open) open.classList.remove('active');
+        }
+    });
+
+    // Update date & notifications periodically
     setInterval(updateCurrentDate, 60000);
+    setInterval(updateNotifications, 30000);
 });
+
+function applyBranding() {
+    const s = Storage.initSettings();
+    const logoText = document.querySelector('.logo-text');
+    if (logoText && s.bakeryName) {
+        logoText.textContent = s.bakeryName.length > 14 ? s.bakeryName.slice(0, 12) + '…' : s.bakeryName;
+        logoText.removeAttribute('data-i18n');
+    }
+    document.title = (s.bakeryName || 'Bakery') + ' — Management System';
+}
+
+function updateNotifications() {
+    const badge = document.getElementById('notificationBadge');
+    if (!badge) return;
+    const products = Storage.getArray(Storage.KEYS.PRODUCTS);
+    const low = products.filter(p => {
+        const stock = Number(p.currentStock) || 0;
+        const min = Number(p.minStock) || 0;
+        return stock <= min;
+    }).length;
+    const pending = Storage.getArray(Storage.KEYS.ORDERS).filter(o => o.status === 'pending').length;
+    const total = low + pending;
+    badge.textContent = total > 99 ? '99+' : total;
+    badge.style.display = total > 0 ? 'flex' : 'none';
+}
+
+window.applyBranding = applyBranding;
+window.updateNotifications = updateNotifications;
 
 /**
  * Sidebar toggle (mobile)
@@ -158,12 +201,18 @@ function setupNavigation() {
             Dashboard.update();
         } else if (pageId === 'pos') {
             if (window.POS) POS.refresh();
+        } else if (pageId === 'raw-materials') {
+            if (window.RawMaterials) RawMaterials.render();
+        } else if (pageId === 'production') {
+            if (window.Production) Production.render();
         } else if (pageId === 'orders') {
             if (window.Orders) Orders.render();
         } else if (pageId === 'stock') {
             if (window.Stock) Stock.render();
         } else if (pageId === 'reports') {
             if (window.Reports) Reports.init();
+    if (window.RawMaterials) RawMaterials.init();
+    if (window.Production) Production.init();
         } else if (pageId === 'settings') {
             if (window.Settings) Settings.load();
         } else if (pageId === 'expenses') {
