@@ -39,6 +39,23 @@ const Settings = {
         });
         document.getElementById('importFileInput')?.addEventListener('change', (e) => this.importData(e));
         document.getElementById('btnClearData')?.addEventListener('click', () => this.clearAllData());
+
+        document.getElementById('btnFirebaseSave')?.addEventListener('click', () => this.saveFirebaseConfig());
+        document.getElementById('btnFirebaseUpload')?.addEventListener('click', () => {
+            if (window.FirebaseSync) FirebaseSync.pushAll();
+        });
+        document.getElementById('btnFirebaseDownload')?.addEventListener('click', () => {
+            if (window.FirebaseSync) FirebaseSync.pullAll();
+        });
+        document.getElementById('btnFirebaseTest')?.addEventListener('click', async () => {
+            const ok = window.FirebaseSync && await FirebaseSync.init();
+            const status = document.getElementById('firebaseStatus');
+            if (status) {
+                status.textContent = ok ? 'Connected ✓' : 'Not connected';
+                status.style.color = ok ? 'var(--success)' : 'var(--danger)';
+            }
+            showToast(ok ? 'Firebase connected' : 'Connection failed — check config', ok ? 'success' : 'error');
+        });
     },
 
     load() {
@@ -69,6 +86,7 @@ const Settings = {
 
         this.syncLangButtons();
         this.updateSidebarLogo(s);
+        this.loadFirebaseForm();
     },
 
     syncLangButtons() {

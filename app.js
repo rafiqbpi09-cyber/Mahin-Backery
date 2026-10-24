@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize storage
     Storage.initStorage();
 
+    // Firebase (if configured)
+    if (window.FirebaseSync) {
+        FirebaseSync.init().then(ok => {
+            if (ok) console.log('Firebase sync ready');
+        });
+    }
+
     // Initialize language
     const savedLang = localStorage.getItem('bms_language') || 'bn';
     i18n.setLanguage(savedLang);

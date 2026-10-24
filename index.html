@@ -1160,7 +1160,69 @@
                                 </button>
                             </div>
                         </div>
+
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <h3>Firebase Cloud Sync</h3>
+                            <span id="firebaseStatus" style="font-size:0.8rem;color:var(--text-muted)">Disabled</span>
+                        </div>
+                        <div class="card-body">
+                            <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:14px">
+                                Connect Firestore to backup &amp; sync data across devices. Get keys from
+                                <a href="https://console.firebase.google.com" target="_blank" rel="noopener" style="color:var(--primary-dark)">Firebase Console</a>
+                                → Project Settings → Your apps.
+                            </p>
+                            <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:14px">
+                                <input type="checkbox" id="fbEnabled" style="width:18px;height:18px">
+                                <label for="fbEnabled" style="margin:0">Enable Firebase Sync</label>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label>API Key</label>
+                                    <input type="text" id="fbApiKey" placeholder="AIza..." autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label>Project ID</label>
+                                    <input type="text" id="fbProjectId" placeholder="my-project-id">
+                                </div>
+                                <div class="form-group">
+                                    <label>Auth Domain</label>
+                                    <input type="text" id="fbAuthDomain" placeholder="my-project.firebaseapp.com">
+                                </div>
+                                <div class="form-group">
+                                    <label>Storage Bucket</label>
+                                    <input type="text" id="fbStorageBucket" placeholder="my-project.appspot.com">
+                                </div>
+                                <div class="form-group">
+                                    <label>Messaging Sender ID</label>
+                                    <input type="text" id="fbMessagingSenderId" placeholder="123456789">
+                                </div>
+                                <div class="form-group">
+                                    <label>App ID</label>
+                                    <input type="text" id="fbAppId" placeholder="1:123:web:abc">
+                                </div>
+                            </div>
+                            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+                                <button type="button" class="btn btn-primary" id="btnFirebaseSave">
+                                    <i class="fas fa-save"></i> Save Config
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btnFirebaseTest">
+                                    <i class="fas fa-plug"></i> Test Connection
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btnFirebaseUpload">
+                                    <i class="fas fa-cloud-upload-alt"></i> Upload to Cloud
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btnFirebaseDownload">
+                                    <i class="fas fa-cloud-download-alt"></i> Download from Cloud
+                                </button>
+                            </div>
+                            <p style="margin-top:12px;font-size:0.8rem;color:var(--text-muted)">
+                                Firestore rules: allow read/write for testing, or lock down for production.
+                                Collection used: <code>bakery_data</code>
+                            </p>
+                        </div>
                     </div>
+
                 </div>
             </section>
         </main>
@@ -1850,6 +1912,9 @@
     <script src="production.js"></script>
     <script src="stock.js"></script>
     <script src="orders.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-sync.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

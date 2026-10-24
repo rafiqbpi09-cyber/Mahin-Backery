@@ -39,6 +39,8 @@ function getData(key) {
 function saveData(key, data) {
     try {
         localStorage.setItem(key, JSON.stringify(data));
+        // Auto-sync to Firebase if enabled
+        if (window.FirebaseSync) FirebaseSync.schedulePush(key);
         return true;
     } catch (e) {
         console.error('Error saving to storage:', key, e);
