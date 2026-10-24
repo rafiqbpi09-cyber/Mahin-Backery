@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.Suppliers) Suppliers.init();
     if (window.Purchases) Purchases.init();
     if (window.Customers) Customers.init();
+    if (window.Expenses) Expenses.init();
 
     // Update date every minute
     setInterval(updateCurrentDate, 60000);
@@ -153,6 +154,8 @@ function setupNavigation() {
             Dashboard.update();
         } else if (pageId === 'pos') {
             if (window.POS) POS.refresh();
+        } else if (pageId === 'expenses') {
+            if (window.Expenses) Expenses.render();
         } else if (pageId === 'customers') {
             if (window.Customers) Customers.render();
         } else if (pageId === 'suppliers') {

@@ -798,10 +798,74 @@
             </section>
 
             <section class="page" id="page-expenses">
-                <div class="coming-soon">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <h2 data-i18n="expensesComing">Expenses Module</h2>
-                    <p data-i18n="comingSoon">Coming in next step...</p>
+                <div class="page-toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="expenseSearch" placeholder="Search expenses..." data-i18n-placeholder="searchExpenses">
+                        </div>
+                        <select id="expenseCategoryFilter" class="filter-select">
+                            <option value="" data-i18n="allCategories">All Categories</option>
+                            <option value="Rent">Rent</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Gas">Gas</option>
+                            <option value="Raw Materials">Raw Materials</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="date" id="expenseDateFrom" class="filter-select" title="From">
+                        <input type="date" id="expenseDateTo" class="filter-select" title="To">
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" id="btnAddExpense">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="addExpense">Add Expense</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <span class="mini-stat-label" data-i18n="totalExpenses">Total Entries</span>
+                        <span class="mini-stat-value" id="expStatCount">0</span>
+                    </div>
+                    <div class="mini-stat danger">
+                        <span class="mini-stat-label" data-i18n="totalExpenseAmount">Total Amount</span>
+                        <span class="mini-stat-value" id="expStatAmount">৳ 0</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label" data-i18n="todaysExpense">Today</span>
+                        <span class="mini-stat-value" id="expStatToday">৳ 0</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="table-responsive">
+                            <table class="data-table" id="expensesTable">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="date">Date</th>
+                                        <th data-i18n="expenseCategory">Category</th>
+                                        <th data-i18n="description">Description</th>
+                                        <th data-i18n="amount">Amount</th>
+                                        <th data-i18n="paymentMethod">Payment</th>
+                                        <th data-i18n="actions">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expensesTableBody">
+                                    <tr class="empty-row">
+                                        <td colspan="6" class="empty-state">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            <p data-i18n="noExpenses">No expenses yet</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -1182,6 +1246,60 @@
         </div>
     </div>
 
+
+    <!-- ========== EXPENSE MODAL ========== -->
+    <div class="modal-overlay" id="expenseModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="expenseModalTitle" data-i18n="addExpense">Add Expense</h2>
+                <button class="modal-close" data-close-modal="expenseModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="expenseForm" class="modal-body">
+                <input type="hidden" id="expenseId">
+                <div class="form-group">
+                    <label data-i18n="expenseCategory">Category <span class="required">*</span></label>
+                    <select id="expenseCategory" required>
+                        <option value="Rent">Rent</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Gas">Gas</option>
+                        <option value="Raw Materials">Raw Materials</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="description">Description</label>
+                    <input type="text" id="expenseDescription" placeholder="e.g. Monthly shop rent">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="amount">Amount <span class="required">*</span></label>
+                    <input type="number" id="expenseAmount" min="0.01" step="0.01" required placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="date">Date</label>
+                    <input type="date" id="expenseDate">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="paymentMethod">Payment Method</label>
+                    <select id="expensePaymentMethod">
+                        <option value="Cash">Cash</option>
+                        <option value="bKash">bKash</option>
+                        <option value="Nagad">Nagad</option>
+                        <option value="Card">Card</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-error" id="expenseFormError"></div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close-modal="expenseModal" data-i18n="cancel">Cancel</button>
+                <button type="submit" form="expenseForm" class="btn btn-primary" data-i18n="saveExpense">Save Expense</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="i18n.js"></script>
@@ -1193,6 +1311,7 @@
     <script src="suppliers.js"></script>
     <script src="purchases.js"></script>
     <script src="customers.js"></script>
+    <script src="expenses.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

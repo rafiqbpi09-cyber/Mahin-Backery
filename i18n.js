@@ -159,6 +159,17 @@ const translations = {
         lastPurchase: 'শেষ ক্রয়',
         customerLedger: 'গ্রাহক লেজার',
         receivePayment: 'পেমেন্ট গ্রহণ',
+        // Expenses
+        addExpense: 'খরচ যোগ করুন',
+        editExpense: 'খরচ সম্পাদনা',
+        saveExpense: 'খরচ সেভ করুন',
+        expenseCategory: 'খরচের ধরন',
+        description: 'বিবরণ',
+        searchExpenses: 'খরচ খুঁজুন...',
+        noExpenses: 'এখনো কোনো খরচ নেই',
+        totalExpenses: 'মোট এন্ট্রি',
+        totalExpenseAmount: 'মোট খরচ',
+
 
 
 
@@ -320,6 +331,17 @@ const translations = {
         lastPurchase: 'Last Purchase',
         customerLedger: 'Customer Ledger',
         receivePayment: 'Receive Payment',
+        // Expenses
+        addExpense: 'Add Expense',
+        editExpense: 'Edit Expense',
+        saveExpense: 'Save Expense',
+        expenseCategory: 'Category',
+        description: 'Description',
+        searchExpenses: 'Search expenses...',
+        noExpenses: 'No expenses yet',
+        totalExpenses: 'Total Entries',
+        totalExpenseAmount: 'Total Amount',
+
 
 
 
