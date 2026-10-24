@@ -878,10 +878,114 @@
             </section>
 
             <section class="page" id="page-settings">
-                <div class="coming-soon">
-                    <i class="fas fa-cog"></i>
-                    <h2 data-i18n="settingsComing">Settings Module</h2>
-                    <p data-i18n="comingSoon">Coming in next step...</p>
+                <div class="settings-layout">
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <h3 data-i18n="bakeryInfo">Bakery Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="settingsForm">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label data-i18n="bakeryName">Bakery Name</label>
+                                        <input type="text" id="setBakeryName" placeholder="My Bakery">
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="phone">Phone</label>
+                                        <input type="text" id="setPhone" placeholder="+880 1XXX-XXXXXX">
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label data-i18n="address">Address</label>
+                                        <input type="text" id="setAddress" placeholder="Dhaka, Bangladesh">
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="email">Email</label>
+                                        <input type="email" id="setEmail" placeholder="info@bakery.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="currency">Currency</label>
+                                        <select id="setCurrency">
+                                            <option value="BDT">BDT (৳)</option>
+                                            <option value="USD">USD ($)</option>
+                                            <option value="INR">INR (₹)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label data-i18n="invoiceFooter">Invoice Footer</label>
+                                        <input type="text" id="setInvoiceFooter" placeholder="Thank you for your purchase!">
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label data-i18n="logo">Logo</label>
+                                        <div class="image-upload">
+                                            <input type="file" id="setLogo" accept="image/*">
+                                            <div class="image-preview" id="setLogoPreview">
+                                                <i class="fas fa-store"></i>
+                                                <span data-i18n="clickToUpload">Click to upload logo</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        <span data-i18n="saveSettings">Save Settings</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <h3 data-i18n="preferences">Preferences</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label data-i18n="language">Language</label>
+                                <div class="lang-toggle" style="display:inline-flex;margin-top:6px">
+                                    <button type="button" class="lang-btn" data-lang="bn" id="setLangBn">বাং</button>
+                                    <button type="button" class="lang-btn" data-lang="en" id="setLangEn">EN</button>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-top:16px">
+                                <label data-i18n="theme">Theme</label>
+                                <div style="display:flex;gap:10px;margin-top:8px">
+                                    <button type="button" class="btn btn-secondary" id="setThemeLight">
+                                        <i class="fas fa-sun"></i> Light
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="setThemeDark">
+                                        <i class="fas fa-moon"></i> Dark
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <h3 data-i18n="dataManagement">Data Management</h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:16px" data-i18n="dataManagementDesc">
+                                Export all data as JSON backup, or import previously exported data.
+                            </p>
+                            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                                <button type="button" class="btn btn-primary" id="btnExportData">
+                                    <i class="fas fa-download"></i>
+                                    <span data-i18n="exportData">Export Data</span>
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btnImportData">
+                                    <i class="fas fa-upload"></i>
+                                    <span data-i18n="importData">Import Data</span>
+                                </button>
+                                <input type="file" id="importFileInput" accept=".json" style="display:none">
+                                <button type="button" class="btn btn-danger" id="btnClearData">
+                                    <i class="fas fa-trash"></i>
+                                    <span data-i18n="clearAllData">Clear All Data</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -1312,6 +1416,7 @@
     <script src="purchases.js"></script>
     <script src="customers.js"></script>
     <script src="expenses.js"></script>
+    <script src="settings.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

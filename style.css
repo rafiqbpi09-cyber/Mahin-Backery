@@ -2146,3 +2146,20 @@ input, select, textarea {
         grid-column: 1 / -1;
     }
 }
+
+/* Settings */
+.settings-layout {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 20px;
+}
+
+.settings-card {
+    height: fit-content;
+}
+
+@media (max-width: 900px) {
+    .settings-layout {
+        grid-template-columns: 1fr;
+    }
+}

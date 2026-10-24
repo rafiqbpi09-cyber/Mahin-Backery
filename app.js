@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.Purchases) Purchases.init();
     if (window.Customers) Customers.init();
     if (window.Expenses) Expenses.init();
+    if (window.Settings) Settings.init();
 
     // Update date every minute
     setInterval(updateCurrentDate, 60000);
@@ -154,6 +155,8 @@ function setupNavigation() {
             Dashboard.update();
         } else if (pageId === 'pos') {
             if (window.POS) POS.refresh();
+        } else if (pageId === 'settings') {
+            if (window.Settings) Settings.load();
         } else if (pageId === 'expenses') {
             if (window.Expenses) Expenses.render();
         } else if (pageId === 'customers') {
@@ -224,7 +227,7 @@ function setupThemeToggle() {
     });
 }
 
-function setTheme(theme) {
+window.setTheme = function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('bms_theme', theme);
 
@@ -245,7 +248,7 @@ function setTheme(theme) {
 /**
  * Update current date in header
  */
-function updateCurrentDate() {
+window.updateCurrentDate = function updateCurrentDate() {
     const el = document.getElementById('currentDate');
     if (!el) return;
 

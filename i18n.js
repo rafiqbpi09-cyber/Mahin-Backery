@@ -169,6 +169,24 @@ const translations = {
         noExpenses: 'এখনো কোনো খরচ নেই',
         totalExpenses: 'মোট এন্ট্রি',
         totalExpenseAmount: 'মোট খরচ',
+        // Settings
+        bakeryInfo: 'বেকারির তথ্য',
+        bakeryName: 'বেকারির নাম',
+        phone: 'ফোন',
+        email: 'ইমেইল',
+        currency: 'মুদ্রা',
+        invoiceFooter: 'ইনভয়েস ফুটার',
+        logo: 'লোগো',
+        saveSettings: 'সেটিংস সেভ করুন',
+        preferences: 'পছন্দসমূহ',
+        language: 'ভাষা',
+        theme: 'থিম',
+        dataManagement: 'ডেটা ম্যানেজমেন্ট',
+        dataManagementDesc: 'সব ডেটা JSON ব্যাকআপ হিসেবে এক্সপোর্ট করুন, অথবা আগের ব্যাকআপ ইমপোর্ট করুন।',
+        exportData: 'এক্সপোর্ট',
+        importData: 'ইমপোর্ট',
+        clearAllData: 'সব ডেটা মুছুন',
+
 
 
 
@@ -341,6 +359,24 @@ const translations = {
         noExpenses: 'No expenses yet',
         totalExpenses: 'Total Entries',
         totalExpenseAmount: 'Total Amount',
+        // Settings
+        bakeryInfo: 'Bakery Information',
+        bakeryName: 'Bakery Name',
+        phone: 'Phone',
+        email: 'Email',
+        currency: 'Currency',
+        invoiceFooter: 'Invoice Footer',
+        logo: 'Logo',
+        saveSettings: 'Save Settings',
+        preferences: 'Preferences',
+        language: 'Language',
+        theme: 'Theme',
+        dataManagement: 'Data Management',
+        dataManagementDesc: 'Export all data as JSON backup, or import previously exported data.',
+        exportData: 'Export Data',
+        importData: 'Import Data',
+        clearAllData: 'Clear All Data',
+
 
 
 
