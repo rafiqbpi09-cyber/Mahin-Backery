@@ -35,6 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.Customers) Customers.init();
     if (window.Expenses) Expenses.init();
     if (window.Settings) Settings.init();
+    if (window.Orders) Orders.init();
+    if (window.Stock) Stock.init();
+    if (window.Reports) Reports.init();
 
     // Update date every minute
     setInterval(updateCurrentDate, 60000);
@@ -155,6 +158,12 @@ function setupNavigation() {
             Dashboard.update();
         } else if (pageId === 'pos') {
             if (window.POS) POS.refresh();
+        } else if (pageId === 'orders') {
+            if (window.Orders) Orders.render();
+        } else if (pageId === 'stock') {
+            if (window.Stock) Stock.render();
+        } else if (pageId === 'reports') {
+            if (window.Reports) Reports.init();
         } else if (pageId === 'settings') {
             if (window.Settings) Settings.load();
         } else if (pageId === 'expenses') {

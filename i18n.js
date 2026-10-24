@@ -186,6 +186,19 @@ const translations = {
         exportData: 'এক্সপোর্ট',
         importData: 'ইমপোর্ট',
         clearAllData: 'সব ডেটা মুছুন',
+        addOrder: 'নতুন অর্ডার',
+        saveOrder: 'অর্ডার সেভ',
+        searchOrders: 'অর্ডার খুঁজুন...',
+        noOrders: 'এখনো কোনো অর্ডার নেই',
+        totalOrders: 'মোট অর্ডার',
+        stockAdjust: 'স্টক অ্যাডজাস্ট',
+        currentStock: 'বর্তমান স্টক',
+        stockHistory: 'স্টক হিস্ট্রি',
+        generateReport: 'রিপোর্ট তৈরি',
+        selectReport: 'রিপোর্ট টাইপ ও তারিখ বেছে নিয়ে Generate চাপুন',
+        payment: 'পেমেন্ট',
+        save: 'সেভ',
+
 
 
 
@@ -376,6 +389,19 @@ const translations = {
         exportData: 'Export Data',
         importData: 'Import Data',
         clearAllData: 'Clear All Data',
+        addOrder: 'New Order',
+        saveOrder: 'Save Order',
+        searchOrders: 'Search orders...',
+        noOrders: 'No orders yet',
+        totalOrders: 'Total',
+        stockAdjust: 'Stock Adjust',
+        currentStock: 'Current Stock',
+        stockHistory: 'Stock Movement',
+        generateReport: 'Generate',
+        selectReport: 'Select report type and date range, then Generate',
+        payment: 'Payment',
+        save: 'Save',
+
 
 
 

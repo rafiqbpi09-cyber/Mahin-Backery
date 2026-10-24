@@ -494,11 +494,49 @@
             </section>
 
             <section class="page" id="page-orders">
-                <div class="coming-soon">
-                    <i class="fas fa-shopping-bag"></i>
-                    <h2 data-i18n="ordersComing">Orders Module</h2>
-                    <p data-i18n="comingSoon">Coming in next step...</p>
+                <div class="page-toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="orderSearch" placeholder="Search orders..." data-i18n-placeholder="searchOrders">
+                        </div>
+                        <select id="orderStatusFilter" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="processing">Processing</option>
+                            <option value="ready">Ready</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <input type="date" id="orderDateFrom" class="filter-select">
+                        <input type="date" id="orderDateTo" class="filter-select">
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" id="btnAddOrder">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="addOrder">New Order</span>
+                        </button>
+                    </div>
                 </div>
+                <div class="mini-stats">
+                    <div class="mini-stat"><span class="mini-stat-label" data-i18n="totalOrders">Total</span><span class="mini-stat-value" id="ordStatTotal">0</span></div>
+                    <div class="mini-stat warning"><span class="mini-stat-label">Pending</span><span class="mini-stat-value" id="ordStatPending">0</span></div>
+                    <div class="mini-stat info"><span class="mini-stat-label">Processing</span><span class="mini-stat-value" id="ordStatProcessing">0</span></div>
+                    <div class="mini-stat"><span class="mini-stat-label" style="color:var(--success)">Delivered</span><span class="mini-stat-value" id="ordStatDelivered">0</span></div>
+                </div>
+                <div class="card"><div class="card-body no-padding"><div class="table-responsive">
+                    <table class="data-table" id="ordersTable">
+                        <thead><tr>
+                            <th>Order ID</th><th data-i18n="customer">Customer</th><th data-i18n="date">Date</th>
+                            <th data-i18n="items">Items</th><th data-i18n="total">Total</th>
+                            <th data-i18n="payment">Payment</th><th data-i18n="status">Status</th><th data-i18n="actions">Actions</th>
+                        </tr></thead>
+                        <tbody id="ordersTableBody">
+                            <tr class="empty-row"><td colspan="8" class="empty-state"><i class="fas fa-shopping-bag"></i><p data-i18n="noOrders">No orders yet</p></td></tr>
+                        </tbody>
+                    </table>
+                </div></div></div>
             </section>
 
             <section class="page" id="page-products">
@@ -790,10 +828,57 @@
             </section>
 
             <section class="page" id="page-stock">
-                <div class="coming-soon">
-                    <i class="fas fa-warehouse"></i>
-                    <h2 data-i18n="stockComing">Stock Module</h2>
-                    <p data-i18n="comingSoon">Coming in next step...</p>
+                <div class="page-toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="stockSearch" placeholder="Search products..." data-i18n-placeholder="searchProducts">
+                        </div>
+                        <select id="stockFilter" class="filter-select">
+                            <option value="">All Stock</option>
+                            <option value="ok">In Stock</option>
+                            <option value="low">Low Stock</option>
+                            <option value="out">Out of Stock</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" id="btnStockAdjust">
+                            <i class="fas fa-sliders-h"></i>
+                            <span data-i18n="stockAdjust">Stock Adjust</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat"><span class="mini-stat-label" data-i18n="totalProducts">Products</span><span class="mini-stat-value" id="stkStatTotal">0</span></div>
+                    <div class="mini-stat"><span class="mini-stat-label">In Stock</span><span class="mini-stat-value" id="stkStatOk">0</span></div>
+                    <div class="mini-stat warning"><span class="mini-stat-label" data-i18n="lowStockProducts">Low</span><span class="mini-stat-value" id="stkStatLow">0</span></div>
+                    <div class="mini-stat danger"><span class="mini-stat-label" data-i18n="outOfStock">Out</span><span class="mini-stat-value" id="stkStatOut">0</span></div>
+                </div>
+                <div class="dashboard-row">
+                    <div class="card">
+                        <div class="card-header"><h3 data-i18n="currentStock">Current Stock</h3></div>
+                        <div class="card-body no-padding"><div class="table-responsive">
+                            <table class="data-table" id="stockTable">
+                                <thead><tr>
+                                    <th data-i18n="productName">Product</th><th data-i18n="category">Category</th>
+                                    <th data-i18n="stock">Stock</th><th data-i18n="minStock">Min</th><th data-i18n="status">Status</th>
+                                </tr></thead>
+                                <tbody id="stockTableBody"></tbody>
+                            </table>
+                        </div></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3 data-i18n="stockHistory">Stock Movement</h3></div>
+                        <div class="card-body no-padding"><div class="table-responsive">
+                            <table class="data-table" id="stockMovementTable">
+                                <thead><tr>
+                                    <th data-i18n="date">Date</th><th data-i18n="productName">Product</th>
+                                    <th>Type</th><th>Qty</th><th>Reason</th>
+                                </tr></thead>
+                                <tbody id="stockMovementBody"></tbody>
+                            </table>
+                        </div></div>
+                    </div>
                 </div>
             </section>
 
@@ -870,10 +955,40 @@
             </section>
 
             <section class="page" id="page-reports">
-                <div class="coming-soon">
-                    <i class="fas fa-chart-bar"></i>
-                    <h2 data-i18n="reportsComing">Reports Module</h2>
-                    <p data-i18n="comingSoon">Coming in next step...</p>
+                <div class="page-toolbar">
+                    <div class="toolbar-left">
+                        <select id="reportType" class="filter-select">
+                            <option value="sales">Daily/Monthly Sales</option>
+                            <option value="purchase">Purchase Report</option>
+                            <option value="expense">Expense Report</option>
+                            <option value="profit">Profit &amp; Loss</option>
+                            <option value="stock">Stock Report</option>
+                            <option value="customer-due">Customer Due</option>
+                            <option value="supplier-due">Supplier Due</option>
+                            <option value="product-sales">Product Sales</option>
+                        </select>
+                        <input type="date" id="reportDateFrom" class="filter-select">
+                        <input type="date" id="reportDateTo" class="filter-select">
+                        <button class="btn btn-primary" id="btnGenerateReport">
+                            <i class="fas fa-chart-bar"></i>
+                            <span data-i18n="generateReport">Generate</span>
+                        </button>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-secondary" id="btnPrintReport">
+                            <i class="fas fa-print"></i>
+                            <span data-i18n="print">Print</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 id="reportTitle" data-i18n="reports">Report</h3></div>
+                    <div class="card-body" id="reportContent">
+                        <div class="empty-state" style="padding:40px;text-align:center;color:var(--text-muted)">
+                            <i class="fas fa-chart-bar" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px"></i>
+                            <p data-i18n="selectReport">Select report type and date range, then Generate</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -1404,6 +1519,105 @@
         </div>
     </div>
 
+
+    <!-- ORDER MODAL -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h2 id="orderModalTitle" data-i18n="addOrder">New Order</h2>
+                <button class="modal-close" data-close-modal="orderModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="orderForm" class="modal-body">
+                <input type="hidden" id="orderId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label data-i18n="customer">Customer</label>
+                        <select id="orderCustomer"><option value="">Walk-in</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="status">Status</label>
+                        <select id="orderStatus">
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="processing">Processing</option>
+                            <option value="ready">Ready</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="date">Date</label>
+                        <input type="date" id="orderDate">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="paymentMethod">Payment</label>
+                        <select id="orderPaymentMethod">
+                            <option value="Cash">Cash</option>
+                            <option value="bKash">bKash</option>
+                            <option value="Nagad">Nagad</option>
+                            <option value="Card">Card</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="purchase-items-section">
+                    <div class="section-label"><span data-i18n="products">Products</span>
+                        <button type="button" class="btn btn-sm btn-secondary" id="btnAddOrderItem"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                    <div id="orderItemsList"></div>
+                </div>
+                <div class="form-grid" style="margin-top:16px">
+                    <div class="form-group"><label data-i18n="total">Total</label><input type="number" id="orderTotal" readonly value="0"></div>
+                    <div class="form-group"><label data-i18n="paidAmount">Paid</label><input type="number" id="orderPaid" min="0" step="0.01" value="0"></div>
+                    <div class="form-group"><label data-i18n="dueAmount">Due</label><input type="number" id="orderDue" readonly value="0"></div>
+                    <div class="form-group"><label data-i18n="note">Note</label><input type="text" id="orderNote"></div>
+                </div>
+                <div class="form-error" id="orderFormError"></div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close-modal="orderModal" data-i18n="cancel">Cancel</button>
+                <button type="submit" form="orderForm" class="btn btn-primary" data-i18n="saveOrder">Save Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STOCK ADJUST MODAL -->
+    <div class="modal-overlay" id="stockAdjustModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 data-i18n="stockAdjust">Stock Adjustment</h2>
+                <button class="modal-close" data-close-modal="stockAdjustModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="stockAdjustForm" class="modal-body">
+                <div class="form-group">
+                    <label data-i18n="productName">Product <span class="required">*</span></label>
+                    <select id="adjustProduct" required><option value="">Select</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="adjustType">
+                        <option value="in">Stock In (+)</option>
+                        <option value="out">Stock Out (−)</option>
+                        <option value="set">Set Exact Qty</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity <span class="required">*</span></label>
+                    <input type="number" id="adjustQty" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Reason</label>
+                    <input type="text" id="adjustReason" placeholder="e.g. Damage, Count correction">
+                </div>
+                <div class="form-error" id="stockAdjustError"></div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close-modal="stockAdjustModal" data-i18n="cancel">Cancel</button>
+                <button type="submit" form="stockAdjustForm" class="btn btn-primary" data-i18n="save">Save</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="i18n.js"></script>
@@ -1417,6 +1631,9 @@
     <script src="customers.js"></script>
     <script src="expenses.js"></script>
     <script src="settings.js"></script>
+    <script src="reports.js"></script>
+    <script src="stock.js"></script>
+    <script src="orders.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
