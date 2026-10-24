@@ -98,7 +98,7 @@ const Settings = {
     save(e) {
         e.preventDefault();
         const settings = {
-            bakeryName: document.getElementById('setBakeryName').value.trim() || 'My Bakery',
+            bakeryName: document.getElementById('setBakeryName').value.trim() || 'Mahin Foods Products',
             phone: document.getElementById('setPhone').value.trim(),
             address: document.getElementById('setAddress').value.trim(),
             email: document.getElementById('setEmail').value.trim(),

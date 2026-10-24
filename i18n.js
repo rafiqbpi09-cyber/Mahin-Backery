@@ -6,7 +6,7 @@
 const translations = {
     bn: {
         // App
-        appName: 'বেকারি এমএস',
+        appName: 'Mahin Foods',
         admin: 'অ্যাডমিন',
         bakeryOwner: 'বেকারি মালিক',
 
@@ -225,7 +225,7 @@ const translations = {
 
     en: {
         // App
-        appName: 'Bakery MS',
+        appName: 'Mahin Foods',
         admin: 'Admin',
         bakeryOwner: 'Bakery Owner',
 

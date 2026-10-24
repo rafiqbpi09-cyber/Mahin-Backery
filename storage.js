@@ -123,10 +123,10 @@ function initSettings() {
     let settings = getData(STORAGE_KEYS.SETTINGS);
     if (!settings) {
         settings = {
-            bakeryName: 'My Bakery',
+            bakeryName: 'Mahin Foods Products',
             address: 'Dhaka, Bangladesh',
             phone: '+880 1XXX-XXXXXX',
-            email: 'info@mybakery.com',
+            email: 'info@mahinfoods.com',
             currency: 'BDT',
             currencySymbol: '৳',
             invoiceFooter: 'Thank you for your purchase!',
