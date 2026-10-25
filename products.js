@@ -5,9 +5,11 @@
 const Products = {
     editingId: null,
     imageData: null,
+    activeTab: 'all', // 'all' | 'factory'
 
     init() {
         this.bindEvents();
+        this.seedFactoryProducts();
         this.populateCategoryDropdowns();
         this.render();
     },
@@ -27,6 +29,15 @@ const Products = {
 
         const stockFilter = document.getElementById('productStockFilter');
         if (stockFilter) stockFilter.addEventListener('change', () => this.render());
+
+        document.querySelectorAll('#productTabs .product-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#productTabs .product-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.activeTab = btn.dataset.tab || 'all';
+                this.render();
+            });
+        });
 
         // Image preview
         const imgInput = document.getElementById('productImage');
@@ -197,6 +208,7 @@ const Products = {
             updatedAt: new Date().toISOString()
         };
 
+        // New products from factory tab (or always join factory catalog for this bakery)
         if (this.editingId) {
             const idx = products.findIndex(p => p.id === this.editingId);
             if (idx !== -1) {
@@ -207,6 +219,8 @@ const Products = {
             products.push({
                 id: Storage.generateId('prod'),
                 ...productData,
+                isFactory: true,
+                source: 'factory',
                 createdAt: new Date().toISOString()
             });
             showToast('Product added successfully', 'success');
@@ -287,6 +301,11 @@ const Products = {
             products = products.filter(p => this.getStockStatus(p) === 'out');
         } else if (stockFilter === 'expiry') {
             products = products.filter(p => this.isExpiringSoon(p) || this.isExpired(p));
+        }
+
+        // Factory products tab
+        if (this.activeTab === 'factory') {
+            products = products.filter(p => p.source === 'factory' || p.isFactory === true);
         }
 
         // Mini stats (from all products, not filtered)
@@ -379,7 +398,112 @@ const Products = {
         el('prodStatLow', low);
         el('prodStatOut', out);
         el('prodStatExpiry', expiry);
+    },
+
+    seedFactoryProducts() {
+        const catalog = [
+            { name: 'ছোট মধু বন', category: 'Bun', unit: 'pcs' },
+            { name: 'হাফ পাউন্ড', category: 'Bread', unit: 'pcs' },
+            { name: 'ফুল পাউন্ড', category: 'Bread', unit: 'pcs' },
+            { name: 'বড় রুটি', category: 'Bread', unit: 'pcs' },
+            { name: 'নান রুটি', category: 'Bread', unit: 'pcs' },
+            { name: 'বাটার বন', category: 'Bun', unit: 'pcs' },
+            { name: 'লতা রুটি', category: 'Bread', unit: 'pcs' },
+            { name: 'চায়না বন', category: 'Bun', unit: 'pcs' },
+            { name: 'মেঘরাজ বন', category: 'Bun', unit: 'pcs' },
+            { name: 'বড় মধু বন', category: 'Bun', unit: 'pcs' },
+            { name: 'টপ কেক', category: 'Cake', unit: 'pcs' },
+            { name: 'নোনতা কেক', category: 'Cake', unit: 'pcs' },
+            { name: 'রিং কেক', category: 'Cake', unit: 'pcs' },
+            { name: 'কোনা কেক', category: 'Cake', unit: 'pcs' },
+            { name: '১ পাউন্ড কেক', category: 'Cake', unit: 'pcs' },
+            { name: 'মিল্ক কোয়াটার', category: 'Cake', unit: 'pcs' },
+            { name: 'পাঁচ পাউন্ড কেক', category: 'Cake', unit: 'pcs' },
+            { name: 'পাম কেক', category: 'Cake', unit: 'pcs' },
+            { name: 'রিম বক্স', category: 'Cake', unit: 'box' },
+            { name: 'বক্স কেক', category: 'Cake', unit: 'box' },
+            { name: 'বিস্কুট (৩০)', category: 'Biscuit', unit: 'pack' },
+            { name: 'বিস্কুট (৪০)', category: 'Biscuit', unit: 'pack' },
+            { name: 'বিস্কুট (৪৫)', category: 'Biscuit', unit: 'pack' },
+            { name: 'বিস্কুট (৫০)', category: 'Biscuit', unit: 'pack' },
+            { name: 'বিস্কুট (১০০)', category: 'Biscuit', unit: 'pack' },
+            { name: 'পার্ল টোস্ট', category: 'Toast', unit: 'pcs' },
+            { name: 'স্পেশাল টোস্ট ৪০০গ্রাম', category: 'Toast', unit: 'pcs' },
+            { name: 'পিংগার টোস্ট', category: 'Toast', unit: 'pcs' },
+            { name: 'বাটার টোস্ট', category: 'Toast', unit: 'pcs' },
+            { name: 'চিকুন টোস্ট', category: 'Toast', unit: 'pcs' },
+            { name: 'লাঠি টোস্ট', category: 'Toast', unit: 'pcs' },
+            { name: 'LOCAL BISCUIT', category: 'Biscuit', unit: 'pack' },
+            { name: '১ নং জেলিস', category: 'Snacks', unit: 'pcs' },
+            { name: '২ নং জেলিস', category: 'Snacks', unit: 'pcs' },
+            { name: 'পেটিস', category: 'Snacks', unit: 'pcs' },
+            { name: 'মিস্টি', category: 'Snacks', unit: 'pcs' },
+            { name: 'ফুট/চানাচুর (৮০)', category: 'Snacks', unit: 'pack' },
+            { name: 'চায়না টোস্ট (১০০)', category: 'Toast', unit: 'pack' },
+            { name: 'চায়না টোস্ট (৫০)', category: 'Toast', unit: 'pack' },
+            { name: 'LOCAL TOAST', category: 'Toast', unit: 'pcs' }
+        ];
+
+        let categories = Categories.getAll();
+        const needed = ['Bread', 'Bun', 'Cake', 'Biscuit', 'Toast', 'Snacks'];
+        let catChanged = false;
+        needed.forEach(name => {
+            if (!categories.find(c => c.name === name)) {
+                categories.push({
+                    id: Storage.generateId('cat'),
+                    name,
+                    status: 'active',
+                    createdAt: new Date().toISOString()
+                });
+                catChanged = true;
+            }
+        });
+        if (catChanged) Storage.saveData(Storage.KEYS.CATEGORIES, categories);
+
+        const catMap = {};
+        Categories.getAll().forEach(c => { catMap[c.name] = c.id; });
+
+        let products = this.getAll();
+        const existingNames = new Set(products.map(p => (p.name || '').trim().toLowerCase()));
+        let added = 0;
+        const now = new Date().toISOString();
+
+        catalog.forEach((item, i) => {
+            const key = item.name.trim().toLowerCase();
+            if (existingNames.has(key)) {
+                const idx = products.findIndex(p => (p.name || '').trim().toLowerCase() === key);
+                if (idx !== -1) {
+                    products[idx].isFactory = true;
+                    products[idx].source = 'factory';
+                }
+                return;
+            }
+            products.push({
+                id: Storage.generateId('prd'),
+                name: item.name,
+                code: 'FAC-' + String(i + 1).padStart(3, '0'),
+                categoryId: catMap[item.category] || null,
+                categoryName: item.category,
+                unit: item.unit || 'pcs',
+                purchasePrice: 0,
+                sellingPrice: 0,
+                currentStock: 0,
+                minStock: 10,
+                expiryDate: null,
+                image: null,
+                status: 'active',
+                isFactory: true,
+                source: 'factory',
+                createdAt: now
+            });
+            existingNames.add(key);
+            added++;
+        });
+
+        Storage.saveData(Storage.KEYS.PRODUCTS, products);
+        if (added > 0) console.log('Factory catalog seeded:', added);
     }
+
 };
 
 window.Products = Products;
