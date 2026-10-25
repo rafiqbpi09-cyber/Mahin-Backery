@@ -74,27 +74,29 @@ const POS = {
     },
 
     renderCategoryTabs() {
-        const tabs = document.getElementById('posCategoryTabs');
-        if (!tabs) return;
+        const sel = document.getElementById('posCategorySelect');
+        if (!sel) return;
 
         const categories = Categories.getAll().filter(c => c.status === 'active');
         const lang = window.i18n ? i18n.getCurrentLang() : 'en';
+        const current = this.selectedCategory || '';
 
-        let html = `<button class="pos-cat-tab ${this.selectedCategory === '' ? 'active' : ''}" data-cat="">All</button>`;
+        let html = `<option value="">All Categories</option>`;
         categories.forEach(c => {
             const name = lang === 'bn' && c.nameBn ? c.nameBn : c.name;
-            html += `<button class="pos-cat-tab ${this.selectedCategory === c.id ? 'active' : ''}" data-cat="${c.id}">${escapeHtml(name)}</button>`;
+            html += `<option value="${c.id}">${escapeHtml(name)}</option>`;
         });
-        tabs.innerHTML = html;
+        sel.innerHTML = html;
+        sel.value = current;
 
-        tabs.querySelectorAll('.pos-cat-tab').forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.selectedCategory = btn.dataset.cat;
-                tabs.querySelectorAll('.pos-cat-tab').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        // Bind once
+        if (!sel.dataset.bound) {
+            sel.dataset.bound = '1';
+            sel.addEventListener('change', () => {
+                this.selectedCategory = sel.value || '';
                 this.renderProducts();
             });
-        });
+        }
     },
 
     renderProducts() {

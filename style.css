@@ -2680,3 +2680,34 @@ body {
     border-color: transparent;
     box-shadow: 0 4px 14px rgba(212, 163, 115, 0.35);
 }
+
+
+/* POS category — single dropdown (minimized) */
+.pos-category-wrap {
+    margin: 0 0 12px;
+    max-width: 280px;
+}
+.pos-category-select {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 36px 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238B7355' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center;
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+.pos-category-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.2);
+}
+.pos-category-select:hover {
+    border-color: var(--primary);
+}
