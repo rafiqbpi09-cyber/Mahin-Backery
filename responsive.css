@@ -646,15 +646,35 @@
 
 /* Touch: remove hover stickiness feel */
 @media (hover: none) {
+    /* Avoid sticky hover on touch; keep :active + .shimmer-on */
     .summary-card:hover,
     .stat-card:hover,
+    .mini-stat:hover,
     .pos-product-card:hover,
-    .category-card:hover {
+    .category-card:hover,
+    .card:hover {
         transform: none;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .summary-card:active,
+    .stat-card:active,
+    .mini-stat:active,
+    .category-card:active,
+    .pos-product-card:active,
+    .card:active,
+    .summary-card.shimmer-on,
+    .stat-card.shimmer-on,
+    .mini-stat.shimmer-on,
+    .card.shimmer-on {
+        transform: translateY(-2px) scale(0.99);
+        box-shadow:
+            0 6px 24px rgba(212, 163, 115, 0.35),
+            0 0 0 2px rgba(233, 196, 106, 0.5),
+            inset 0 0 60px rgba(255, 248, 220, 0.6);
     }
 
     .pos-product-card:active {
-        transform: scale(0.97);
         border-color: var(--primary);
     }
 

@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Apply bakery name to sidebar + notifications
     applyBranding();
     updateNotifications();
+    initShimmerCards();
 
     // ESC closes topmost modal
     document.addEventListener('keydown', function(e) {
@@ -344,3 +345,26 @@ window.App = {
         if (item) item.click();
     }
 };
+
+/** Touch/click shimmer glow on cards */
+function initShimmerCards() {
+    const selector = '.summary-card, .stat-card, .mini-stat, .category-card, .pos-product-card, .card';
+    document.addEventListener('touchstart', function(e) {
+        const card = e.target.closest(selector);
+        if (!card) return;
+        card.classList.add('shimmer-on');
+        clearTimeout(card._shimmerTimer);
+        card._shimmerTimer = setTimeout(() => card.classList.remove('shimmer-on'), 900);
+    }, { passive: true });
+
+    document.addEventListener('mousedown', function(e) {
+        if (e.button !== 0) return;
+        const card = e.target.closest(selector);
+        if (!card) return;
+        // mouse already has :hover; still trigger shine once on click
+        card.classList.add('shimmer-on');
+        clearTimeout(card._shimmerTimer);
+        card._shimmerTimer = setTimeout(() => card.classList.remove('shimmer-on'), 900);
+    });
+}
+window.initShimmerCards = initShimmerCards;

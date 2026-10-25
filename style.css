@@ -2186,3 +2186,182 @@ input, select, textarea {
 .summary-card .card-value {
     word-break: break-all;
 }
+
+
+/* ========================================
+   Shimmer / Glow — hover + touch
+   ======================================== */
+
+.summary-card,
+.stat-card,
+.mini-stat,
+.category-card,
+.pos-product-card,
+.card.chart-card,
+.card.payment-summary-card,
+.card.recent-card,
+.card.alert-card,
+.settings-card,
+.card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* Light fill + shine layer */
+.summary-card::after,
+.stat-card::after,
+.mini-stat::after,
+.category-card::after,
+.pos-product-card::after,
+.card.chart-card::after,
+.card.payment-summary-card::after,
+.card.recent-card::after,
+.card.alert-card::after,
+.settings-card::after,
+.card::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background:
+        linear-gradient(
+            105deg,
+            transparent 0%,
+            transparent 40%,
+            rgba(255, 255, 255, 0.7) 50%,
+            transparent 60%,
+            transparent 100%
+        );
+    transform: translateX(-130%) skewX(-18deg);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Glow fill under the shine */
+.summary-card.shimmer-on,
+.stat-card.shimmer-on,
+.mini-stat.shimmer-on,
+.category-card.shimmer-on,
+.pos-product-card.shimmer-on,
+.card.shimmer-on,
+.summary-card:hover,
+.stat-card:hover,
+.mini-stat:hover,
+.category-card:hover,
+.pos-product-card:hover,
+.card.chart-card:hover,
+.card.payment-summary-card:hover,
+.card.recent-card:hover,
+.card.alert-card:hover,
+.settings-card:hover {
+    box-shadow:
+        0 10px 32px rgba(212, 163, 115, 0.32),
+        0 0 0 1px rgba(233, 196, 106, 0.45),
+        inset 0 0 60px rgba(255, 250, 235, 0.55);
+    transform: translateY(-3px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.summary-card.shimmer-on::after,
+.stat-card.shimmer-on::after,
+.mini-stat.shimmer-on::after,
+.category-card.shimmer-on::after,
+.pos-product-card.shimmer-on::after,
+.card.shimmer-on::after,
+.summary-card:hover::after,
+.stat-card:hover::after,
+.mini-stat:hover::after,
+.category-card:hover::after,
+.pos-product-card:hover::after,
+.card.chart-card:hover::after,
+.card.payment-summary-card:hover::after,
+.card.recent-card:hover::after,
+.card.alert-card:hover::after,
+.settings-card:hover::after,
+.card:hover::after {
+    opacity: 1;
+    animation: shimmerSweep 0.9s ease forwards;
+}
+
+.summary-card:active,
+.stat-card:active,
+.mini-stat:active,
+.category-card:active,
+.pos-product-card:active,
+.card:active {
+    box-shadow:
+        0 4px 22px rgba(212, 163, 115, 0.4),
+        0 0 0 2px rgba(233, 196, 106, 0.55),
+        inset 0 0 70px rgba(255, 248, 220, 0.65);
+    transform: translateY(-1px) scale(0.985);
+}
+
+.summary-card:active::after,
+.stat-card:active::after,
+.mini-stat:active::after,
+.category-card:active::after,
+.pos-product-card:active::after,
+.card:active::after {
+    opacity: 1;
+    animation: shimmerSweep 0.7s ease forwards;
+}
+
+@keyframes shimmerSweep {
+    0% {
+        transform: translateX(-130%) skewX(-18deg);
+        opacity: 0.4;
+    }
+    35% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(130%) skewX(-18deg);
+        opacity: 0;
+    }
+}
+
+/* Dark theme */
+[data-theme="dark"] .summary-card::after,
+[data-theme="dark"] .stat-card::after,
+[data-theme="dark"] .mini-stat::after,
+[data-theme="dark"] .category-card::after,
+[data-theme="dark"] .pos-product-card::after,
+[data-theme="dark"] .card::after {
+    background: linear-gradient(
+        105deg,
+        transparent 0%,
+        transparent 40%,
+        rgba(233, 196, 106, 0.35) 50%,
+        transparent 60%,
+        transparent 100%
+    );
+}
+
+[data-theme="dark"] .summary-card:hover,
+[data-theme="dark"] .stat-card:hover,
+[data-theme="dark"] .mini-stat:hover,
+[data-theme="dark"] .category-card:hover,
+[data-theme="dark"] .summary-card.shimmer-on,
+[data-theme="dark"] .stat-card.shimmer-on,
+[data-theme="dark"] .card.shimmer-on {
+    box-shadow:
+        0 10px 32px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(212, 163, 115, 0.45),
+        inset 0 0 50px rgba(212, 163, 115, 0.12);
+}
+
+/* Content above light */
+.summary-card > *,
+.stat-card > *,
+.mini-stat > *,
+.category-card > *,
+.pos-product-card > *,
+.card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.summary-card::before {
+    z-index: 3;
+}
