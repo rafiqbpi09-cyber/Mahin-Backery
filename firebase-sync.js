@@ -73,7 +73,7 @@ const FirebaseSync = {
                 });
             }
             this.db = firebase.firestore();
-            try { await this.db.enablePersistence({ synchronizeTabs: true }); } catch (e) {}
+            // Persistence: skip deprecated enablePersistence / multi-tab API
 
             this.enabled = true;
             this.setStatus('Cloud loading…', true);
