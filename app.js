@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         showToast('Cloud থেকে লোড হচ্ছে…', 'success');
         await FirebaseSync.init();
     } else {
-        if (window.FirebaseSync) FirebaseSync.setStatus('Cloud: Off — Settings এ Firebase চালু করুন', null);
+        if (window.FirebaseSync) FirebaseSync.setStatus('Cloud Off', null);
     }
 
     Storage.initStorage();

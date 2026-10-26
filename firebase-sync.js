@@ -50,7 +50,7 @@ const FirebaseSync = {
         if (!config || !config.enabled || !config.apiKey || !config.projectId) {
             this.enabled = false;
             this.ready = true;
-            this.setStatus('Cloud: Off (local cache)', null);
+            this.setStatus('Cloud Off', null);
             return false;
         }
 
