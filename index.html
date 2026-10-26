@@ -1557,8 +1557,17 @@
                 <button class="modal-close" data-close-modal="customerLedgerModal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body" id="customerLedgerContent"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-close-modal="customerLedgerModal" data-i18n="done">Done</button>
+            <div class="modal-footer" style="flex-wrap:wrap;gap:8px">
+                <button type="button" class="btn btn-secondary" id="btnCustPrint" onclick="Customers.printSummary()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnCustExcel" onclick="Customers.exportExcel()">
+                    <i class="fas fa-file-excel"></i> Excel
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnCustPdf" onclick="Customers.exportPDF()">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button type="button" class="btn btn-primary" data-close-modal="customerLedgerModal" data-i18n="done">Done</button>
             </div>
         </div>
     </div>

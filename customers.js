@@ -124,9 +124,12 @@ const Customers = {
         document.getElementById('confirmModal').classList.add('active');
     },
 
+    currentLedgerId: null,
+
     openLedger(id) {
         const cust = this.getById(id);
         if (!cust) return;
+        this.currentLedgerId = id;
 
         const sales = Storage.getArray(Storage.KEYS.SALES)
             .filter(s => s.customerId === id)
@@ -134,11 +137,17 @@ const Customers = {
 
         const payments = (cust.payments || []).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
 
+        const totalPurchase = Number(cust.totalPurchase) || 0;
+        const totalPaid = Number(cust.paid) || 0;
+        const due = Number(cust.due) || 0;
+        const advance = Number(cust.advance) || 0;
+        const settings = Storage.initSettings();
+
         const title = document.getElementById('customerLedgerTitle');
-        if (title) title.textContent = `Ledger — ${cust.name}`;
+        if (title) title.textContent = `Customer Summary — ${cust.name}`;
 
         let salesRows = sales.length === 0
-            ? '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">No sales</td></tr>'
+            ? '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">No sales yet</td></tr>'
             : sales.map(s => {
                 const d = new Date(s.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                 return `<tr>
@@ -146,12 +155,12 @@ const Customers = {
                     <td>${d}</td>
                     <td>${Storage.formatCurrency(s.grandTotal)}</td>
                     <td>${Storage.formatCurrency(s.paidAmount)}</td>
-                    <td class="${s.dueAmount > 0 ? 'text-danger' : ''}">${Storage.formatCurrency(s.dueAmount)}</td>
+                    <td class="${(s.dueAmount || 0) > 0 ? 'text-danger' : ''}">${Storage.formatCurrency(s.dueAmount)}</td>
                 </tr>`;
             }).join('');
 
         let payRows = payments.length === 0
-            ? '<tr><td colspan="4" style="text-align:center;color:var(--text-muted)">No payments received</td></tr>'
+            ? '<tr><td colspan="4" style="text-align:center;color:var(--text-muted)">No extra payments</td></tr>'
             : payments.map(p => {
                 const d = new Date(p.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                 return `<tr>
@@ -163,29 +172,183 @@ const Customers = {
             }).join('');
 
         document.getElementById('customerLedgerContent').innerHTML = `
-            <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px">
-                <div class="mini-stat"><span class="mini-stat-label">Total Purchase</span><span class="mini-stat-value">${Storage.formatCurrency(cust.totalPurchase || 0)}</span></div>
-                <div class="mini-stat"><span class="mini-stat-label">Paid</span><span class="mini-stat-value">${Storage.formatCurrency(cust.paid || 0)}</span></div>
-                <div class="mini-stat warning"><span class="mini-stat-label">Due</span><span class="mini-stat-value">${Storage.formatCurrency(cust.due || 0)}</span></div>
-                <div class="mini-stat"><span class="mini-stat-label">Advance</span><span class="mini-stat-value" style="color:var(--success)">${Storage.formatCurrency(cust.advance || 0)}</span></div>
-            </div>
-            <h3 style="margin-bottom:10px;font-size:1rem">Sales History</h3>
-            <div class="table-responsive" style="margin-bottom:24px">
-                <table class="data-table">
-                    <thead><tr><th>Invoice</th><th>Date</th><th>Total</th><th>Paid</th><th>Due</th></tr></thead>
-                    <tbody>${salesRows}</tbody>
-                </table>
-            </div>
-            <h3 style="margin-bottom:10px;font-size:1rem">Payments Received</h3>
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Note</th></tr></thead>
-                    <tbody>${payRows}</tbody>
-                </table>
+            <div id="customerSummaryPrintArea">
+                <div class="cust-summary-header" style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-light)">
+                    <div style="font-weight:700;font-size:1.15rem">${escapeHtml(settings.bakeryName || 'Mahin Foods Products')}</div>
+                    <div style="color:var(--text-muted);font-size:0.85rem">${escapeHtml(settings.address || '')} ${settings.phone ? '· ' + escapeHtml(settings.phone) : ''}</div>
+                    <div style="margin-top:8px;font-weight:600">কাস্টমার হিসাব / Customer Statement</div>
+                    <div style="font-size:0.85rem;color:var(--text-secondary)">Date: ${new Date().toLocaleDateString('en-GB')}</div>
+                </div>
+
+                <div class="cust-info-box" style="background:var(--bg-body);border-radius:12px;padding:14px 16px;margin-bottom:16px;border:1px solid var(--border-light)">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.92rem">
+                        <div><strong>Name:</strong> ${escapeHtml(cust.name)}</div>
+                        <div><strong>Mobile:</strong> ${escapeHtml(cust.mobile) || '—'}</div>
+                        <div style="grid-column:1/-1"><strong>Address:</strong> ${escapeHtml(cust.address) || '—'}</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size:1rem;margin-bottom:10px">📊 Account Summary / হিসাব সামারি</h3>
+                <div class="table-responsive" style="margin-bottom:20px">
+                    <table class="data-table cust-summary-table">
+                        <tbody>
+                            <tr>
+                                <td><strong>মোট প্রোডাক্ট / Total Purchase</strong></td>
+                                <td style="text-align:right;font-weight:700">${Storage.formatCurrency(totalPurchase)}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>মোট পরিশোধ / Total Paid</strong></td>
+                                <td style="text-align:right;font-weight:700">${Storage.formatCurrency(totalPaid)}</td>
+                            </tr>
+                            <tr style="background:rgba(220,53,69,0.08)">
+                                <td><strong>বকেয়া / Due</strong></td>
+                                <td style="text-align:right;font-weight:700;color:var(--danger)">${Storage.formatCurrency(due)}</td>
+                            </tr>
+                            <tr style="background:rgba(42,157,106,0.1)">
+                                <td><strong>অগ্রিম / Advance</strong></td>
+                                <td style="text-align:right;font-weight:700;color:var(--success)">${Storage.formatCurrency(advance)}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>নেট ব্যালেন্স / Net Balance</strong>
+                                    <div style="font-size:0.75rem;color:var(--text-muted);font-weight:400">${due > 0 ? '(কাস্টমারের কাছে পাওনা)' : advance > 0 ? '(কাস্টমারের জমা)' : '(সমন্বিত)'}</div>
+                                </td>
+                                <td style="text-align:right;font-weight:700;font-size:1.1rem">
+                                    ${due > 0 ? Storage.formatCurrency(due) + ' Due' : advance > 0 ? Storage.formatCurrency(advance) + ' Advance' : Storage.formatCurrency(0)}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="font-size:1rem;margin-bottom:10px">Sales / বিক্রয় তালিকা (${sales.length})</h3>
+                <div class="table-responsive" style="margin-bottom:20px">
+                    <table class="data-table">
+                        <thead><tr><th>Invoice</th><th>Date</th><th>Total</th><th>Paid</th><th>Due</th></tr></thead>
+                        <tbody>${salesRows}</tbody>
+                    </table>
+                </div>
+
+                <h3 style="font-size:1rem;margin-bottom:10px">Payments / পেমেন্ট (${payments.length})</h3>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Note</th></tr></thead>
+                        <tbody>${payRows}</tbody>
+                    </table>
+                </div>
             </div>
         `;
 
         document.getElementById('customerLedgerModal').classList.add('active');
+    },
+
+    getSummaryData(id) {
+        const cust = this.getById(id);
+        if (!cust) return null;
+        const sales = Storage.getArray(Storage.KEYS.SALES).filter(s => s.customerId === id);
+        const payments = cust.payments || [];
+        return {
+            cust,
+            sales,
+            payments,
+            totalPurchase: Number(cust.totalPurchase) || 0,
+            totalPaid: Number(cust.paid) || 0,
+            due: Number(cust.due) || 0,
+            advance: Number(cust.advance) || 0,
+            settings: Storage.initSettings()
+        };
+    },
+
+    printSummary() {
+        const id = this.currentLedgerId;
+        if (!id) return;
+        const area = document.getElementById('customerSummaryPrintArea');
+        if (!area) return;
+        const w = window.open('', '_blank', 'width=800,height=900');
+        w.document.write(`<!DOCTYPE html><html><head><title>Customer Statement</title>
+            <style>
+                body{font-family:system-ui,sans-serif;padding:24px;color:#222}
+                table{width:100%;border-collapse:collapse;margin:12px 0}
+                th,td{border:1px solid #ddd;padding:8px 10px;text-align:left;font-size:13px}
+                th{background:#f5f0eb}
+                h3{margin:18px 0 8px;font-size:15px}
+                .text-danger{color:#c0392b}
+                @media print{body{padding:0}}
+            </style></head><body>${area.innerHTML}
+            <script>window.onload=function(){window.print();}</script>
+            </body></html>`);
+        w.document.close();
+    },
+
+    exportPDF() {
+        // Browser print → Save as PDF
+        this.printSummary();
+        showToast('Print dialog → Destination: Save as PDF', 'success');
+    },
+
+    exportExcel() {
+        const id = this.currentLedgerId;
+        const data = this.getSummaryData(id);
+        if (!data) return;
+        const { cust, sales, payments, totalPurchase, totalPaid, due, advance, settings } = data;
+
+        const lines = [];
+        lines.push(['Customer Statement']);
+        lines.push([settings.bakeryName || 'Mahin Foods Products']);
+        lines.push(['Date', new Date().toLocaleDateString('en-GB')]);
+        lines.push([]);
+        lines.push(['Customer Name', cust.name]);
+        lines.push(['Mobile', cust.mobile || '']);
+        lines.push(['Address', cust.address || '']);
+        lines.push([]);
+        lines.push(['ACCOUNT SUMMARY']);
+        lines.push(['Total Purchase', totalPurchase]);
+        lines.push(['Total Paid', totalPaid]);
+        lines.push(['Due', due]);
+        lines.push(['Advance', advance]);
+        lines.push(['Net', due > 0 ? due + ' Due' : advance > 0 ? advance + ' Advance' : 0]);
+        lines.push([]);
+        lines.push(['SALES']);
+        lines.push(['Invoice', 'Date', 'Total', 'Paid', 'Due']);
+        sales.forEach(s => {
+            lines.push([
+                s.invoiceNo,
+                s.date ? new Date(s.date).toLocaleDateString('en-GB') : '',
+                s.grandTotal || 0,
+                s.paidAmount || 0,
+                s.dueAmount || 0
+            ]);
+        });
+        lines.push([]);
+        lines.push(['PAYMENTS']);
+        lines.push(['Date', 'Amount', 'Method', 'Note']);
+        payments.forEach(p => {
+            lines.push([
+                p.date ? new Date(p.date).toLocaleDateString('en-GB') : '',
+                p.amount || 0,
+                p.method || '',
+                p.note || ''
+            ]);
+        });
+
+        // CSV (Excel opens fine)
+        const csv = lines.map(row =>
+            row.map(cell => {
+                const s = String(cell ?? '');
+                if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+                    return '"' + s.replace(/"/g, '""') + '"';
+                }
+                return s;
+            }).join(',')
+        ).join('\n');
+
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Customer_${(cust.name || 'statement').replace(/\s+/g, '_')}_${Storage.getToday()}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Excel/CSV downloaded', 'success');
     },
 
     openReceivePayment(id) {
