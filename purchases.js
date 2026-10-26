@@ -76,27 +76,33 @@ const Purchases = {
         const idx = this.itemCounter++;
         const products = Products.getAll().filter(p => p.status === 'active');
 
-        let productOptions = '<option value="">Select Product</option>';
+        let productOptions = '<option value="">-- লিস্ট থেকে বাছুন --</option>';
+        productOptions += '<option value="__custom__">+ নতুন পণ্য লিখুন (Custom)</option>';
         products.forEach(p => {
             productOptions += `<option value="${p.id}" data-price="${p.purchasePrice || 0}">${escapeHtml(p.name)}</option>`;
         });
 
+        const isCustom = data && data.isCustom;
         const row = document.createElement('div');
         row.className = 'purchase-item-row';
         row.dataset.idx = idx;
         row.innerHTML = `
-            <div class="form-group">
+            <div class="form-group" style="min-width:140px">
                 <label>Product</label>
-                <select class="pur-product" required>
+                <select class="pur-product">
                     ${productOptions}
                 </select>
+            </div>
+            <div class="form-group pur-custom-wrap" style="display:none;min-width:140px">
+                <label>নতুন পণ্যের নাম *</label>
+                <input type="text" class="pur-custom-name" placeholder="যেমন: ময়দা ২৫ কেজি" value="${data && data.isCustom ? escapeHtml(data.name || '') : ''}">
             </div>
             <div class="form-group">
                 <label>Qty</label>
                 <input type="number" class="pur-qty" min="0.01" step="0.01" value="${data ? data.qty : 1}" required>
             </div>
             <div class="form-group">
-                <label>Price</label>
+                <label>ক্রয় মূল্য</label>
                 <input type="number" class="pur-price" min="0" step="0.01" value="${data ? data.price : 0}" required>
             </div>
             <div class="form-group">
@@ -111,13 +117,29 @@ const Purchases = {
         list.appendChild(row);
 
         const productSelect = row.querySelector('.pur-product');
+        const customWrap = row.querySelector('.pur-custom-wrap');
+        const customName = row.querySelector('.pur-custom-name');
         const qtyInput = row.querySelector('.pur-qty');
         const priceInput = row.querySelector('.pur-price');
         const totalInput = row.querySelector('.pur-total');
         const removeBtn = row.querySelector('.btn-remove-item');
 
-        if (data && data.productId) {
+        const toggleCustom = () => {
+            const custom = productSelect.value === '__custom__';
+            customWrap.style.display = custom ? 'block' : 'none';
+            if (custom) {
+                customName.required = true;
+                customName.focus();
+            } else {
+                customName.required = false;
+            }
+        };
+
+        if (data && data.productId && !data.isCustom) {
             productSelect.value = data.productId;
+        } else if (isCustom) {
+            productSelect.value = '__custom__';
+            toggleCustom();
         }
 
         const recalc = () => {
@@ -128,6 +150,7 @@ const Purchases = {
         };
 
         productSelect.addEventListener('change', () => {
+            toggleCustom();
             const opt = productSelect.selectedOptions[0];
             if (opt && opt.dataset.price) {
                 priceInput.value = opt.dataset.price;
@@ -164,11 +187,27 @@ const Purchases = {
             const productId = row.querySelector('.pur-product').value;
             const qty = parseFloat(row.querySelector('.pur-qty').value) || 0;
             const price = parseFloat(row.querySelector('.pur-price').value) || 0;
-            if (!productId || qty <= 0) return;
+            if (qty <= 0) return;
 
+            if (productId === '__custom__') {
+                const name = (row.querySelector('.pur-custom-name')?.value || '').trim();
+                if (!name) return;
+                items.push({
+                    productId: null,
+                    isCustom: true,
+                    name,
+                    qty,
+                    price,
+                    total: qty * price
+                });
+                return;
+            }
+
+            if (!productId) return;
             const product = Products.getById(productId);
             items.push({
                 productId,
+                isCustom: false,
                 name: product ? product.name : 'Unknown',
                 qty,
                 price,
@@ -202,7 +241,7 @@ const Purchases = {
             return;
         }
         if (items.length === 0) {
-            error.textContent = 'Add at least one product';
+            error.textContent = 'কমপক্ষে একটি পণ্য যোগ করুন (লিস্ট বা নতুন নাম)';
             error.classList.add('show');
             return;
         }
@@ -233,15 +272,36 @@ const Purchases = {
         purchases.push(purchase);
         Storage.saveData(Storage.KEYS.PURCHASES, purchases);
 
-        // Increase product stock
+        // Increase stock — custom names become new products
         let products = Products.getAll();
         items.forEach(item => {
-            const idx = products.findIndex(p => p.id === item.productId);
-            if (idx !== -1) {
-                products[idx].currentStock = (Number(products[idx].currentStock) || 0) + item.qty;
-                // Optionally update purchase price to latest
-                products[idx].purchasePrice = item.price;
-                products[idx].updatedAt = now;
+            if (item.isCustom || !item.productId) {
+                const newId = Storage.generateId('prd');
+                products.push({
+                    id: newId,
+                    name: item.name,
+                    code: 'PUR-' + Date.now().toString().slice(-6),
+                    categoryId: null,
+                    categoryName: 'Other',
+                    unit: 'pcs',
+                    purchasePrice: item.price,
+                    sellingPrice: item.price,
+                    currentStock: item.qty,
+                    minStock: 5,
+                    expiryDate: null,
+                    image: null,
+                    status: 'active',
+                    source: 'purchase',
+                    createdAt: now
+                });
+                item.productId = newId;
+            } else {
+                const idx = products.findIndex(p => p.id === item.productId);
+                if (idx !== -1) {
+                    products[idx].currentStock = (Number(products[idx].currentStock) || 0) + item.qty;
+                    products[idx].purchasePrice = item.price;
+                    products[idx].updatedAt = now;
+                }
             }
         });
         Storage.saveData(Storage.KEYS.PRODUCTS, products);
