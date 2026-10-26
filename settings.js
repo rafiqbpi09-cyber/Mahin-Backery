@@ -204,7 +204,71 @@ const Settings = {
             setTimeout(() => location.reload(), 800);
         };
         document.getElementById('confirmModal').classList.add('active');
-    }
+    },
+
+    loadFirebaseForm() {
+        const c = (window.FirebaseSync && FirebaseSync.getConfig()) || {};
+        const set = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.value = val || '';
+        };
+        set('fbApiKey', c.apiKey);
+        set('fbAuthDomain', c.authDomain);
+        set('fbProjectId', c.projectId);
+        set('fbStorageBucket', c.storageBucket);
+        set('fbMessagingSenderId', c.messagingSenderId);
+        set('fbAppId', c.appId);
+        const en = document.getElementById('fbEnabled');
+        if (en) en.checked = !!c.enabled;
+        const ap = document.getElementById('fbAutoPull');
+        if (ap) ap.checked = c.autoPull !== false;
+        const status = document.getElementById('firebaseStatus');
+        if (status) {
+            if (window.FirebaseSync && FirebaseSync.enabled) {
+                status.textContent = 'Connected ✓';
+                status.style.color = 'var(--success)';
+            } else if (c.enabled) {
+                status.textContent = 'Enabled (connecting…)';
+                status.style.color = 'var(--text-muted)';
+            } else {
+                status.textContent = 'Disabled';
+                status.style.color = 'var(--text-muted)';
+            }
+        }
+    },
+
+    saveFirebaseConfig() {
+        if (!window.FirebaseSync) {
+            showToast('Firebase module not loaded', 'error');
+            return;
+        }
+        const config = {
+            enabled: document.getElementById('fbEnabled')?.checked || false,
+            autoPull: document.getElementById('fbAutoPull')?.checked !== false,
+            apiKey: document.getElementById('fbApiKey')?.value.trim() || '',
+            authDomain: document.getElementById('fbAuthDomain')?.value.trim() || '',
+            projectId: document.getElementById('fbProjectId')?.value.trim() || '',
+            storageBucket: document.getElementById('fbStorageBucket')?.value.trim() || '',
+            messagingSenderId: document.getElementById('fbMessagingSenderId')?.value.trim() || '',
+            appId: document.getElementById('fbAppId')?.value.trim() || ''
+        };
+        if (config.enabled && (!config.apiKey || !config.projectId)) {
+            showToast('API Key এবং Project ID লাগবে', 'warning');
+            return;
+        }
+        FirebaseSync.saveConfig(config);
+        showToast('Firebase config saved', 'success');
+        FirebaseSync.init().then(ok => {
+            const status = document.getElementById('firebaseStatus');
+            if (status) {
+                status.textContent = ok ? 'Connected ✓' : (config.enabled ? 'Failed to connect' : 'Disabled');
+                status.style.color = ok ? 'var(--success)' : 'var(--text-muted)';
+            }
+            if (ok) showToast('Firebase connected', 'success');
+            else if (config.enabled) showToast('Connect হয়নি — Key/Rules চেক করুন', 'error');
+        });
+    },
+
 };
 
 window.Settings = Settings;
