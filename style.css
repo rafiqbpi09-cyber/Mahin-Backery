@@ -2715,3 +2715,7 @@ body {
 #posChangeRow strong { font-size: 1.1rem; }
 .text-success { color: var(--success) !important; }
 
+
+.sync-status-badge.ok { color: var(--success) !important; border-color: rgba(42,157,106,0.4) !important; }
+.sync-status-badge.err { color: var(--danger) !important; border-color: rgba(220,53,69,0.4) !important; }
+

@@ -169,6 +169,7 @@
                 </button>
 
                 <!-- Notifications -->
+                <span id="syncStatusBadge" class="sync-status-badge" style="display:none;font-size:0.7rem;padding:4px 10px;border-radius:20px;background:var(--bg-body);border:1px solid var(--border);color:var(--text-muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
                 <button class="notification-btn" id="notificationBtn" aria-label="Notifications">
                     <i class="fas fa-bell"></i>
                     <span class="badge" id="notificationBadge">3</span>
@@ -1189,10 +1190,18 @@
                                 <a href="https://console.firebase.google.com" target="_blank" rel="noopener" style="color:var(--primary-dark)">Firebase Console</a>
                                 → Project Settings → Your apps.
                             </p>
-                            <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:14px">
+                            <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:10px">
                                 <input type="checkbox" id="fbEnabled" style="width:18px;height:18px">
                                 <label for="fbEnabled" style="margin:0">Enable Firebase Sync</label>
                             </div>
+                            <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:14px">
+                                <input type="checkbox" id="fbAutoPull" style="width:18px;height:18px" checked>
+                                <label for="fbAutoPull" style="margin:0">Auto download on open (অফিস/বাসায় ডেটা মিলবে)</label>
+                            </div>
+                            <p style="font-size:0.8rem;color:var(--warning);margin-bottom:12px;background:var(--warning-bg);padding:10px;border-radius:8px">
+                                <strong>গুরুত্বপূর্ণ:</strong> বাসা ও অফিস — দুই কম্পিউটারেই একই Firebase API Key / Project ID সেট করতে হবে।
+                                বাসায় কাজ শেষে <strong>Upload to Cloud</strong> চাপুন। অফিসে খুললে অটো ডাউনলোড হবে (অথবা Download from Cloud)।
+                            </p>
                             <div class="form-grid">
                                 <div class="form-group full-width">
                                     <label>API Key</label>
