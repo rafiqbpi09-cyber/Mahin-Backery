@@ -1,6 +1,6 @@
 /* ========================================
-   LocalStorage Manager
-   সব ডেটা LocalStorage-এ সংরক্ষণ
+   Storage Manager
+   Primary: Firebase Cloud | Cache: memory + local (offline only)
    ======================================== */
 
 const STORAGE_KEYS = {
@@ -38,9 +38,20 @@ function getData(key) {
  */
 function saveData(key, data) {
     try {
+        // Always update cache so UI stays fast
         localStorage.setItem(key, JSON.stringify(data));
-        // Auto-sync to Firebase if enabled
-        if (window.FirebaseSync) FirebaseSync.schedulePush(key);
+        // Primary write: Firebase (immediate)
+        if (window.FirebaseSync && FirebaseSync.enabled) {
+            FirebaseSync.pushKey(key).then(ok => {
+                if (!ok && typeof showToast === 'function') {
+                    // soft warn once per key burst
+                    console.warn('Cloud save failed for', key);
+                }
+            });
+        } else if (window.FirebaseSync && FirebaseSync.isConfigured && FirebaseSync.isConfigured()) {
+            // Config exists but not connected yet — queue
+            FirebaseSync.schedulePush(key);
+        }
         return true;
     } catch (e) {
         console.error('Error saving to storage:', key, e);

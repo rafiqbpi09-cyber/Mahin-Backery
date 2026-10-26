@@ -1,38 +1,34 @@
 /* ========================================
-   Firebase Firestore Sync — multi-device
+   Firebase = Primary database
+   LocalStorage = offline cache only
    ======================================== */
 
 const FirebaseSync = {
     db: null,
     enabled: false,
     syncing: false,
+    ready: false,
     lastError: null,
     collections: [
-        'bms_products',
-        'bms_categories',
-        'bms_customers',
-        'bms_suppliers',
-        'bms_sales',
-        'bms_purchases',
-        'bms_expenses',
-        'bms_orders',
-        'bms_raw_materials',
-        'bms_productions',
-        'bms_stock_movements',
-        'bms_settings'
+        'bms_products', 'bms_categories', 'bms_customers', 'bms_suppliers',
+        'bms_sales', 'bms_purchases', 'bms_expenses', 'bms_orders',
+        'bms_raw_materials', 'bms_productions', 'bms_stock_movements', 'bms_settings'
     ],
 
     getConfig() {
         try {
             const raw = localStorage.getItem('bms_firebase_config');
             return raw ? JSON.parse(raw) : null;
-        } catch {
-            return null;
-        }
+        } catch { return null; }
     },
 
     saveConfig(config) {
         localStorage.setItem('bms_firebase_config', JSON.stringify(config));
+    },
+
+    isConfigured() {
+        const c = this.getConfig();
+        return !!(c && c.apiKey && c.projectId && c.enabled);
     },
 
     setStatus(text, ok) {
@@ -53,12 +49,14 @@ const FirebaseSync = {
         const config = this.getConfig();
         if (!config || !config.enabled || !config.apiKey || !config.projectId) {
             this.enabled = false;
-            this.setStatus('Firebase: Off', null);
+            this.ready = true;
+            this.setStatus('Cloud: Off (local cache)', null);
             return false;
         }
 
         if (typeof firebase === 'undefined') {
             this.enabled = false;
+            this.ready = true;
             this.setStatus('Firebase SDK missing', false);
             return false;
         }
@@ -75,29 +73,23 @@ const FirebaseSync = {
                 });
             }
             this.db = firebase.firestore();
-            try {
-                await this.db.enablePersistence({ synchronizeTabs: true });
-            } catch (e) { /* ignore */ }
+            try { await this.db.enablePersistence({ synchronizeTabs: true }); } catch (e) {}
 
             this.enabled = true;
-            this.setStatus('Firebase: Connected…', true);
-            console.log('Firebase connected:', config.projectId);
+            this.setStatus('Cloud loading…', true);
 
-            // Auto-download from cloud on every load (office PC gets home data)
-            if (config.autoPull !== false) {
-                await this.pullAll({ silent: true, reload: true });
-            } else {
-                this.setStatus('Firebase: Connected', true);
-            }
+            // Always load from cloud first (source of truth)
+            await this.pullAll({ silent: true, reload: false });
+
+            this.ready = true;
+            this.setStatus('Cloud ✓ Online', true);
             return true;
         } catch (err) {
-            console.error('Firebase init error:', err);
+            console.error(err);
             this.enabled = false;
+            this.ready = true;
             this.lastError = err.message || String(err);
-            this.setStatus('Firebase: Error', false);
-            if (typeof showToast === 'function') {
-                showToast('Firebase: ' + this.lastError, 'error');
-            }
+            this.setStatus('Cloud error', false);
             return false;
         }
     },
@@ -105,13 +97,9 @@ const FirebaseSync = {
     async pushKey(key) {
         if (!this.enabled || !this.db) return false;
         try {
-            let raw = localStorage.getItem(key);
+            const raw = localStorage.getItem(key);
             let parsed = null;
-            try {
-                parsed = raw ? JSON.parse(raw) : null;
-            } catch {
-                parsed = raw;
-            }
+            try { parsed = raw ? JSON.parse(raw) : null; } catch { parsed = raw; }
             await this.db.collection('bakery_data').doc(key).set({
                 data: parsed,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -119,53 +107,41 @@ const FirebaseSync = {
             }, { merge: true });
             return true;
         } catch (err) {
-            console.error('Firebase push error', key, err);
+            console.error('push', key, err);
             this.lastError = err.message || String(err);
+            this.setStatus('Save failed', false);
             return false;
         }
     },
 
     async pushAll(opts = {}) {
         if (!this.enabled || !this.db) {
-            if (!opts.silent) showToast('Firebase চালু ও Save Config করুন', 'warning');
+            if (!opts.silent) showToast('Firebase Enable + Save Config করুন', 'warning');
             return false;
         }
         this.syncing = true;
         this.setStatus('Uploading…', true);
-        if (!opts.silent) showToast('ক্লাউডে আপলোড হচ্ছে…', 'success');
-
-        let ok = 0;
-        let fail = 0;
+        let ok = 0, fail = 0;
         for (const key of this.collections) {
-            if (await this.pushKey(key)) ok++;
-            else fail++;
+            if (await this.pushKey(key)) ok++; else fail++;
         }
         this.syncing = false;
-
-        if (fail > 0) {
-            this.setStatus('Upload partial / error', false);
-            if (!opts.silent) {
-                showToast(
-                    'কিছু ডেটা আপলোড হয়নি। Firestore Rules চেক করুন: ' + (this.lastError || ''),
-                    'error'
-                );
-            }
+        if (fail) {
+            this.setStatus('Upload error', false);
+            if (!opts.silent) showToast('Upload ব্যর্থ: ' + (this.lastError || 'Rules?'), 'error');
             return false;
         }
-        this.setStatus('Uploaded ✓ ' + new Date().toLocaleTimeString(), true);
-        if (!opts.silent) showToast(`ক্লাউডে সেভ হয়েছে (${ok}টি)`, 'success');
+        this.setStatus('Cloud ✓ Saved', true);
+        if (!opts.silent) showToast('সব ডেটা Firebase-এ সেভ', 'success');
         return true;
     },
 
     async pullAll(opts = {}) {
         if (!this.enabled || !this.db) {
-            if (!opts.silent) showToast('Firebase কানেক্টেড নয়', 'warning');
+            if (!opts.silent) showToast('Firebase কানেক্ট নেই', 'warning');
             return false;
         }
         this.syncing = true;
-        this.setStatus('Downloading…', true);
-        if (!opts.silent) showToast('ক্লাউড থেকে ডাউনলোড…', 'success');
-
         try {
             const snap = await this.db.collection('bakery_data').get();
             let count = 0;
@@ -177,49 +153,35 @@ const FirebaseSync = {
                 }
             });
             this.syncing = false;
-
             if (count === 0) {
-                this.setStatus('Cloud empty — Upload from home PC', null);
-                if (!opts.silent) {
-                    showToast('ক্লাউডে এখনো ডেটা নেই। বাসায় Upload to Cloud চাপুন।', 'warning');
-                }
-                return true;
+                this.setStatus('Cloud empty', null);
+                if (!opts.silent) showToast('ক্লাউড খালি — একবার Upload করুন', 'warning');
+            } else {
+                this.setStatus('Cloud ✓ ' + count + ' sets', true);
+                if (!opts.silent) showToast('Firebase থেকে লোড (' + count + ')', 'success');
             }
-
-            this.setStatus('Synced ✓ ' + new Date().toLocaleTimeString(), true);
-            if (!opts.silent) showToast(`ডাউনলোড (${count}টি)। রিলোড…`, 'success');
-
-            // Avoid infinite reload loop: only reload once per session pull
-            if (opts.reload !== false) {
-                const flag = sessionStorage.getItem('bms_pulled');
+            if (opts.reload) {
+                const flag = sessionStorage.getItem('bms_cloud_loaded');
                 if (!flag) {
-                    sessionStorage.setItem('bms_pulled', '1');
-                    setTimeout(() => location.reload(), 600);
+                    sessionStorage.setItem('bms_cloud_loaded', '1');
+                    setTimeout(() => location.reload(), 400);
                 }
             }
             return true;
         } catch (err) {
             this.syncing = false;
             this.lastError = err.message || String(err);
-            console.error(err);
-            this.setStatus('Download failed', false);
-            if (!opts.silent) {
-                showToast('ডাউনলোড ব্যর্থ: ' + this.lastError + ' (Rules / internet?)', 'error');
-            }
+            this.setStatus('Download fail', false);
+            if (!opts.silent) showToast('ডাউনলোড ব্যর্থ: ' + this.lastError, 'error');
             return false;
         }
     },
 
     _timers: {},
     schedulePush(key) {
-        if (!this.enabled || this.syncing) return;
         if (!this.collections.includes(key)) return;
         clearTimeout(this._timers[key]);
-        this._timers[key] = setTimeout(async () => {
-            const ok = await this.pushKey(key);
-            if (ok) this.setStatus('Auto-saved cloud ✓', true);
-            else this.setStatus('Cloud save failed', false);
-        }, 500);
+        this._timers[key] = setTimeout(() => this.pushKey(key), 300);
     }
 };
 

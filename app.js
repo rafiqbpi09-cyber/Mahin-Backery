@@ -2,26 +2,13 @@
    Bakery Management System - Main App
    ======================================== */
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize storage
-    Storage.initStorage();
-
-    // Firebase (if configured)
-    if (window.FirebaseSync) {
-        FirebaseSync.init().then(ok => {
-            if (ok) console.log('Firebase sync ready');
-        });
-    }
-
-    // Initialize language
+document.addEventListener('DOMContentLoaded', async function() {
+    // Theme/lang first (local preference only)
     const savedLang = localStorage.getItem('bms_language') || 'bn';
     i18n.setLanguage(savedLang);
-
-    // Initialize theme
     const savedTheme = localStorage.getItem('bms_theme') || 'light';
     setTheme(savedTheme);
 
-    // Setup UI
     setupSidebar();
     setupHeader();
     setupNavigation();
@@ -29,11 +16,20 @@ document.addEventListener('DOMContentLoaded', function() {
     setupThemeToggle();
     updateCurrentDate();
 
-    // Load Dashboard
+    // Firebase first = source of truth, then seed empty keys
+    if (window.FirebaseSync && FirebaseSync.isConfigured()) {
+        showToast('Cloud থেকে লোড হচ্ছে…', 'success');
+        await FirebaseSync.init();
+    } else {
+        if (window.FirebaseSync) FirebaseSync.setStatus('Cloud: Off — Settings এ Firebase চালু করুন', null);
+    }
+
+    Storage.initStorage();
+
+    // Modules after cloud data is in cache
     Dashboard.update();
     Dashboard.setupChartFilters();
 
-    // Init modules
     if (window.Categories) Categories.init();
     if (window.Products) Products.init();
     if (window.POS) POS.init();
