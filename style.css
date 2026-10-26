@@ -2778,3 +2778,118 @@ body {
     background: var(--bg-card);
 }
 
+
+/* ========================================
+   POS product cards — clear & readable
+   ======================================== */
+
+.pos-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 12px;
+}
+
+.pos-product-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+}
+
+.pos-product-card .pos-product-img,
+.pos-product-card .pos-product-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #FDF3E7;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.pos-product-card .pos-product-name {
+    font-family: "Hind Siliguri", "Inter", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.35;
+    word-break: break-word;
+    max-width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6em;
+}
+
+.pos-product-card .pos-product-price {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-top: 2px;
+}
+
+.pos-product-card .pos-product-stock,
+.pos-product-card .stock-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--bg-body);
+}
+
+.pos-product-card.out-of-stock {
+    opacity: 0.72;
+}
+
+.pos-product-card.out-of-stock .pos-product-stock,
+.pos-product-card.out-of-stock .stock-label {
+    color: var(--danger);
+    background: var(--danger-bg);
+}
+
+[data-theme="dark"] .pos-product-card {
+    background: #1e1a16;
+    border-color: #3d342c;
+}
+
+[data-theme="dark"] .pos-product-card .pos-product-name {
+    color: #f5f0ea;
+}
+
+[data-theme="dark"] .pos-product-card .pos-product-price {
+    color: #E9C46A;
+}
+
+[data-theme="dark"] .pos-product-card .pos-product-img {
+    background: rgba(212, 163, 115, 0.15);
+}
+
+.pos-product-stock.out {
+    color: var(--danger) !important;
+    background: var(--danger-bg) !important;
+}
+.pos-product-stock.low {
+    color: #B8860B !important;
+    background: var(--warning-bg) !important;
+}
+.pos-product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
