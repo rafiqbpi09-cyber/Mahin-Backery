@@ -1,18 +1,14 @@
 /* ========================================
-   Firebase Config — ONE FILE for all devices
-   এই ফাইলে Key বসিয়ে GitHub-এ আপলোড করুন।
-   মোবাইল/কম্পিউটার দুই জায়গায় অটো Cloud চালু হবে।
+   Firebase Config — Mahin Foods Products
    ======================================== */
 
 window.FIREBASE_CONFIG = {
-    enabled: true,   // true = cloud on for every visitor of this site
+    enabled: true,
     autoPull: true,
-
-    // Firebase Console → Project settings → Your apps → Config থেকে কপি করুন:
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyAFzwclIITroAorqp3h6kT8aYNVs-apWFY",
+    authDomain: "mahin-foods-products.firebaseapp.com",
+    projectId: "mahin-foods-products",
+    storageBucket: "mahin-foods-products.firebasestorage.app",
+    messagingSenderId: "200840128515",
+    appId: "1:200840128515:web:8c5721c0d81da95ef08636"
 };
