@@ -227,17 +227,26 @@ const POS = {
         if (paid < 0) paid = 0;
 
         const due = Math.max(0, grand - paid);
+        const change = Math.max(0, paid - grand);
 
-        document.getElementById('posSubtotal').textContent = Storage.formatCurrency(subtotal);
-        document.getElementById('posGrandTotal').textContent = Storage.formatCurrency(grand);
-        document.getElementById('posDue').textContent = Storage.formatCurrency(due);
+        const subEl = document.getElementById('posSubtotal');
+        const grandEl = document.getElementById('posGrandTotal');
+        const dueEl = document.getElementById('posDue');
+        if (subEl) subEl.textContent = Storage.formatCurrency(subtotal);
+        if (grandEl) grandEl.textContent = Storage.formatCurrency(grand);
+        if (dueEl) dueEl.textContent = Storage.formatCurrency(due);
+
+        const changeRow = document.getElementById('posChangeRow');
+        const changeEl = document.getElementById('posChange');
+        if (changeEl) changeEl.textContent = Storage.formatCurrency(change);
+        if (changeRow) changeRow.style.display = change > 0 ? '' : 'none';
 
         const checkout = document.getElementById('posCheckout');
         if (checkout) {
             checkout.disabled = this.cart.length === 0;
         }
 
-        return { subtotal, discount, grand, paid, due };
+        return { subtotal, discount, grand, paid, due, change };
     },
 
     renderCart() {
@@ -337,6 +346,7 @@ const POS = {
             grandTotal: totals.grand,
             paidAmount: totals.paid,
             dueAmount: totals.due,
+            changeAmount: totals.change || 0,
             paymentMethod: this.paymentMethod,
             status: totals.due > 0 ? 'due' : 'paid',
             createdAt: now
@@ -374,16 +384,43 @@ const POS = {
         });
         Storage.saveData(Storage.KEYS.STOCK_MOVEMENTS, movements);
 
-        // Update customer totals if selected
+        // Update customer: Due + Advance
         if (customerId) {
             let customers = Storage.getArray(Storage.KEYS.CUSTOMERS);
             const cIdx = customers.findIndex(c => c.id === customerId);
             if (cIdx !== -1) {
-                customers[cIdx].totalPurchase = (Number(customers[cIdx].totalPurchase) || 0) + totals.grand;
-                customers[cIdx].paid = (Number(customers[cIdx].paid) || 0) + totals.paid;
-                customers[cIdx].due = (Number(customers[cIdx].due) || 0) + totals.due;
-                customers[cIdx].lastPurchaseDate = now;
+                const c = customers[cIdx];
+                let due = Number(c.due) || 0;
+                let advance = Number(c.advance) || 0;
+                const grand = totals.grand;
+                let paid = totals.paid;
+
+                c.totalPurchase = (Number(c.totalPurchase) || 0) + grand;
+                c.paid = (Number(c.paid) || 0) + paid;
+
+                // 1) Use existing advance against this bill first
+                const useAdv = Math.min(advance, grand);
+                advance -= useAdv;
+                let remainBill = grand - useAdv;
+
+                // 2) Apply paid cash to remaining bill
+                if (paid >= remainBill) {
+                    const extra = paid - remainBill;
+                    remainBill = 0;
+                    // 3) Extra pays old due, then becomes advance
+                    const payOldDue = Math.min(extra, due);
+                    due -= payOldDue;
+                    advance += (extra - payOldDue);
+                } else {
+                    due += (remainBill - paid);
+                }
+
+                c.due = Math.max(0, due);
+                c.advance = Math.max(0, advance);
+                c.lastPurchaseDate = now;
+                customers[cIdx] = c;
                 Storage.saveData(Storage.KEYS.CUSTOMERS, customers);
+                if (window.Customers) Customers.render();
             }
         }
 
@@ -460,6 +497,9 @@ const POS = {
                     <div class="row grand"><span>Grand Total</span><span>${Storage.formatCurrency(sale.grandTotal)}</span></div>
                     <div class="row"><span>Paid</span><span>${Storage.formatCurrency(sale.paidAmount)}</span></div>
                     <div class="row"><span>Due</span><span>${Storage.formatCurrency(sale.dueAmount)}</span></div>
+                    ${(sale.changeAmount || Math.max(0, (sale.paidAmount||0)-(sale.grandTotal||0))) > 0
+                        ? `<div class="row" style="color:green"><span>Change / ফেরত</span><span>${Storage.formatCurrency(sale.changeAmount || Math.max(0, (sale.paidAmount||0)-(sale.grandTotal||0)))}</span></div>`
+                        : ''}
                 </div>
                 <div class="invoice-footer">
                     ${escapeHtml(settings.invoiceFooter || 'Thank you for your purchase!')}

@@ -167,6 +167,7 @@ const Customers = {
                 <div class="mini-stat"><span class="mini-stat-label">Total Purchase</span><span class="mini-stat-value">${Storage.formatCurrency(cust.totalPurchase || 0)}</span></div>
                 <div class="mini-stat"><span class="mini-stat-label">Paid</span><span class="mini-stat-value">${Storage.formatCurrency(cust.paid || 0)}</span></div>
                 <div class="mini-stat warning"><span class="mini-stat-label">Due</span><span class="mini-stat-value">${Storage.formatCurrency(cust.due || 0)}</span></div>
+                <div class="mini-stat"><span class="mini-stat-label">Advance</span><span class="mini-stat-value" style="color:var(--success)">${Storage.formatCurrency(cust.advance || 0)}</span></div>
             </div>
             <h3 style="margin-bottom:10px;font-size:1rem">Sales History</h3>
             <div class="table-responsive" style="margin-bottom:24px">
@@ -192,10 +193,10 @@ const Customers = {
         if (!cust) return;
 
         document.getElementById('receiveCustomerId').value = id;
-        document.getElementById('receiveCustomerInfo').textContent = `${cust.name}${cust.mobile ? ' · ' + cust.mobile : ''}`;
+        document.getElementById('receiveCustomerInfo').textContent = `${cust.name}${cust.mobile ? ' · ' + cust.mobile : ''} | Advance: ${Storage.formatCurrency(cust.advance || 0)}`;
         document.getElementById('receiveCurrentDue').value = Storage.formatCurrency(cust.due || 0);
         document.getElementById('receiveAmount').value = '';
-        document.getElementById('receiveAmount').max = cust.due || 999999;
+        document.getElementById('receiveAmount').removeAttribute('max');
         document.getElementById('receiveNote').value = '';
         document.getElementById('receivePaymentError').classList.remove('show');
         document.getElementById('receivePaymentModal').classList.add('active');
@@ -218,24 +219,24 @@ const Customers = {
             error.classList.add('show');
             return;
         }
-        if (amount > (cust.due || 0) + 0.01) {
-            error.textContent = 'Amount cannot exceed due';
-            error.classList.add('show');
-            return;
-        }
 
         let customers = this.getAll();
         const idx = customers.findIndex(c => c.id === customerId);
         if (idx === -1) return;
 
-        const payAmount = Math.min(amount, customers[idx].due || 0);
-        customers[idx].paid = (Number(customers[idx].paid) || 0) + payAmount;
-        customers[idx].due = Math.max(0, (Number(customers[idx].due) || 0) - payAmount);
+        let due = Number(customers[idx].due) || 0;
+        let advance = Number(customers[idx].advance) || 0;
+        const toDue = Math.min(amount, due);
+        due -= toDue;
+        advance += (amount - toDue);
+        customers[idx].paid = (Number(customers[idx].paid) || 0) + amount;
+        customers[idx].due = Math.max(0, due);
+        customers[idx].advance = Math.max(0, advance);
 
         if (!customers[idx].payments) customers[idx].payments = [];
         customers[idx].payments.push({
             id: Storage.generateId('pay'),
-            amount: payAmount,
+            amount: amount,
             method,
             note,
             date: new Date().toISOString()
@@ -243,7 +244,7 @@ const Customers = {
 
         // Also reduce due on oldest due sales (simple FIFO)
         let sales = Storage.getArray(Storage.KEYS.SALES);
-        let remaining = payAmount;
+        let remaining = Math.min(amount, toDue);
         sales
             .filter(s => s.customerId === customerId && (s.dueAmount || 0) > 0)
             .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -289,12 +290,13 @@ const Customers = {
         const el = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
         el('custStatTotal', all.length);
         el('custStatPurchase', Storage.formatCurrency(all.reduce((s, c) => s + (c.totalPurchase || 0), 0)));
+        el('custStatAdvance', Storage.formatCurrency((this.getAll?this.getAll():[]).reduce((s,c)=>s+(Number(c.advance)||0),0)));
         el('custStatDue', Storage.formatCurrency(all.reduce((s, c) => s + (c.due || 0), 0)));
 
         if (customers.length === 0) {
             tbody.innerHTML = `
                 <tr class="empty-row">
-                    <td colspan="8" class="empty-state">
+                    <td colspan="9" class="empty-state">
                         <i class="fas fa-users"></i>
                         <p data-i18n="noCustomers">No customers yet</p>
                     </td>
@@ -318,16 +320,16 @@ const Customers = {
                     <td>${Storage.formatCurrency(c.totalPurchase || 0)}</td>
                     <td>${Storage.formatCurrency(c.paid || 0)}</td>
                     <td><span class="${(c.due || 0) > 0 ? 'text-danger' : ''}">${Storage.formatCurrency(c.due || 0)}</span></td>
+                    <td><span style="color:${(c.advance || 0) > 0 ? 'var(--success)' : 'inherit'}">${Storage.formatCurrency(c.advance || 0)}</span></td>
                     <td>${lastDate}</td>
                     <td>
                         <div class="action-btns">
                             <button class="btn btn-icon edit" title="Ledger" onclick="Customers.openLedger('${c.id}')" style="background:var(--success-bg);color:var(--success)">
                                 <i class="fas fa-book"></i>
                             </button>
-                            ${(c.due || 0) > 0 ? `
-                            <button class="btn btn-icon edit" title="Receive Payment" onclick="Customers.openReceivePayment('${c.id}')" style="background:var(--warning-bg);color:#B8860B">
+                            <button class="btn btn-icon edit" title="Receive Payment / Advance" onclick="Customers.openReceivePayment('${c.id}')" style="background:var(--warning-bg);color:#B8860B">
                                 <i class="fas fa-hand-holding-usd"></i>
-                            </button>` : ''}
+                            </button>
                             <button class="btn btn-icon edit" title="Edit" onclick="Customers.openModal(Customers.getById('${c.id}'))">
                                 <i class="fas fa-pen"></i>
                             </button>

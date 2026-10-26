@@ -476,6 +476,10 @@
                                 <span data-i18n="dueAmount">Due Amount</span>
                                 <strong id="posDue" class="text-danger">৳ 0</strong>
                             </div>
+                            <div class="pos-summary-row" id="posChangeRow" style="display:none">
+                                <span data-i18n="changeReturn">Change / ফেরত</span>
+                                <strong id="posChange" class="text-success">৳ 0</strong>
+                            </div>
                             <div class="pos-payment-methods">
                                 <label data-i18n="paymentMethod">Payment Method</label>
                                 <div class="payment-method-btns" id="posPaymentMethods">
@@ -690,6 +694,7 @@
                                         <th data-i18n="total">Total</th>
                                         <th data-i18n="paid">Paid</th>
                                         <th data-i18n="due">Due</th>
+                                        <th data-i18n="advance">Advance</th>
                                         <th data-i18n="actions">Actions</th>
                                     </tr>
                                 </thead>
@@ -740,6 +745,10 @@
                         <span class="mini-stat-label" data-i18n="dueAmount">Total Due</span>
                         <span class="mini-stat-value" id="custStatDue">৳ 0</span>
                     </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-label" data-i18n="advance">Total Advance</span>
+                        <span class="mini-stat-value" id="custStatAdvance" style="color:var(--success)">৳ 0</span>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -754,13 +763,14 @@
                                         <th data-i18n="totalPurchase">Total Purchase</th>
                                         <th data-i18n="paid">Paid</th>
                                         <th data-i18n="due">Due</th>
+                                        <th data-i18n="advance">Advance</th>
                                         <th data-i18n="lastPurchase">Last Purchase</th>
                                         <th data-i18n="actions">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="customersTableBody">
                                     <tr class="empty-row">
-                                        <td colspan="8" class="empty-state">
+                                        <td colspan="9" class="empty-state">
                                             <i class="fas fa-users"></i>
                                             <p data-i18n="noCustomers">No customers yet</p>
                                         </td>

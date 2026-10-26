@@ -2711,3 +2711,7 @@ body {
 .pos-category-select:hover {
     border-color: var(--primary);
 }
+
+#posChangeRow strong { font-size: 1.1rem; }
+.text-success { color: var(--success) !important; }
+
