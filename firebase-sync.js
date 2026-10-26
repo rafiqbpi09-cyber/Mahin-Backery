@@ -16,10 +16,30 @@ const FirebaseSync = {
     ],
 
     getConfig() {
+        // 1) User saved in Settings (this device)
         try {
             const raw = localStorage.getItem('bms_firebase_config');
-            return raw ? JSON.parse(raw) : null;
-        } catch { return null; }
+            if (raw) {
+                const c = JSON.parse(raw);
+                if (c && c.apiKey && c.projectId) return c;
+            }
+        } catch (e) {}
+
+        // 2) Shared config from firebase-config.js (all devices / mobile)
+        const g = window.FIREBASE_CONFIG;
+        if (g && g.apiKey && g.projectId) {
+            return {
+                enabled: g.enabled !== false,
+                autoPull: g.autoPull !== false,
+                apiKey: g.apiKey,
+                authDomain: g.authDomain || '',
+                projectId: g.projectId,
+                storageBucket: g.storageBucket || '',
+                messagingSenderId: g.messagingSenderId || '',
+                appId: g.appId || ''
+            };
+        }
+        return null;
     },
 
     saveConfig(config) {
